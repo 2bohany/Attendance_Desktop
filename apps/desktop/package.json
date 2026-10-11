@@ -1,0 +1,1447 @@
+{
+  "name": "@attendance/desktop",
+  "version": "0.1.0",
+  "private": true,
+  "main": "dist-electron/main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -p tsconfig.electron.json && vite build && electron-builder",
+    "build:renderer": "cross-env VITE_ELECTRON=false vite build",
+    "build:electron": "tsc -p tsconfig.electron.json",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.electron.json --noEmit",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@attendance/config": "*",
+    "@attendance/shared": "*",
+    "@fontsource/cairo": "^5.3.0",
+    "@fontsource/inter": "^5.3.0",
+    "@hookform/resolvers": "^3.9.1",
+    "@radix-ui/react-alert-dialog": "^1.1.4",
+    "@radix-ui/react-dialog": "^1.1.4",
+    "@radix-ui/react-dropdown-menu": "^2.1.4",
+    "@radix-ui/react-label": "^2.1.1",
+    "@radix-ui/react-select": "^2.1.4",
+    "@radix-ui/react-slot": "^1.1.1",
+    "@radix-ui/react-tabs": "^1.1.2",
+    "@radix-ui/react-tooltip": "^1.1.6",
+    "@tanstack/react-query": "^5.62.8",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
+    "lucide-react": "^0.468.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-hook-form": "^7.54.2",
+    "recharts": "^2.15.0",
+    "sonner": "^1.7.1",
+    "tailwind-merge": "^2.6.0",
+    "tailwindcss-animate": "^1.0.7",
+    "vaul": "^1.1.2",
+    "zod": "^3.24.1",
+    "zustand": "^5.0.2"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.16",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "concurrently": "^9.1.0",
+    "cross-env": "^7.0.3",
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8",
+    "playwright": "^1.62.1",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.3",
+    "vite-plugin-electron": "^0.28.8",
+    "vite-plugin-electron-renderer": "^0.14.6",
+    "wait-on": "^8.0.1"
+  },
+  "build": {
+    "appId": "com.attendance.desktop",
+    "productName": "AttendanceApp",
+    "electronVersion": "33.2.1",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "../backend/dist",
+        "to": "backend",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../backend/prisma",
+        "to": "backend/prisma",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/.prisma",
+        "to": "backend/node_modules/.prisma",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/@borewit/text-codec",
+        "to": "backend/node_modules/@borewit/text-codec",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/@lukeed/csprng",
+        "to": "backend/node_modules/@lukeed/csprng",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/@nestjs/common",
+        "to": "backend/node_modules/@nestjs/common",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/@nestjs/config",
+        "to": "backend/node_modules/@nestjs/config",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/@nestjs/core",
+        "to": "backend/node_modules/@nestjs/core",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/@nestjs/jwt",
+        "to": "backend/node_modules/@nestjs/jwt",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/@nestjs/passport",
+        "to": "backend/node_modules/@nestjs/passport",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/@nestjs/platform-express",
+        "to": "backend/node_modules/@nestjs/platform-express",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/@nuxtjs/opencollective",
+        "to": "backend/node_modules/@nuxtjs/opencollective",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/@prisma/client",
+        "to": "backend/node_modules/@prisma/client",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/@prisma/config",
+        "to": "backend/node_modules/@prisma/config",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/@prisma/debug",
+        "to": "backend/node_modules/@prisma/debug",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/@prisma/engines",
+        "to": "backend/node_modules/@prisma/engines",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/@prisma/engines-version",
+        "to": "backend/node_modules/@prisma/engines-version",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/@prisma/fetch-engine",
+        "to": "backend/node_modules/@prisma/fetch-engine",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/@prisma/get-platform",
+        "to": "backend/node_modules/@prisma/get-platform",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/@standard-schema/spec",
+        "to": "backend/node_modules/@standard-schema/spec",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/@tokenizer/inflate",
+        "to": "backend/node_modules/@tokenizer/inflate",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/@tokenizer/token",
+        "to": "backend/node_modules/@tokenizer/token",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/@types/jsonwebtoken",
+        "to": "backend/node_modules/@types/jsonwebtoken",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/@types/ms",
+        "to": "backend/node_modules/@types/ms",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/@types/node",
+        "to": "backend/node_modules/@types/node",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/@types/validator",
+        "to": "backend/node_modules/@types/validator",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/accepts",
+        "to": "backend/node_modules/accepts",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/ansi-styles",
+        "to": "backend/node_modules/ansi-styles",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/anymatch",
+        "to": "backend/node_modules/anymatch",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/append-field",
+        "to": "backend/node_modules/append-field",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/array-flatten",
+        "to": "backend/node_modules/array-flatten",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/bcryptjs",
+        "to": "backend/node_modules/bcryptjs",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/binary-extensions",
+        "to": "backend/node_modules/binary-extensions",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/body-parser",
+        "to": "backend/node_modules/body-parser",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/braces",
+        "to": "backend/node_modules/braces",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/buffer-equal-constant-time",
+        "to": "backend/node_modules/buffer-equal-constant-time",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/buffer-from",
+        "to": "backend/node_modules/buffer-from",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/busboy",
+        "to": "backend/node_modules/busboy",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/bytes",
+        "to": "backend/node_modules/bytes",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/c12",
+        "to": "backend/node_modules/c12",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/call-bind-apply-helpers",
+        "to": "backend/node_modules/call-bind-apply-helpers",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/call-bound",
+        "to": "backend/node_modules/call-bound",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/chalk",
+        "to": "backend/node_modules/chalk",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/chokidar",
+        "to": "backend/node_modules/chokidar",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/citty",
+        "to": "backend/node_modules/citty",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/class-transformer",
+        "to": "backend/node_modules/class-transformer",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/class-validator",
+        "to": "backend/node_modules/class-validator",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/color-convert",
+        "to": "backend/node_modules/color-convert",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/color-name",
+        "to": "backend/node_modules/color-name",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/concat-stream",
+        "to": "backend/node_modules/concat-stream",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/confbox",
+        "to": "backend/node_modules/confbox",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/consola",
+        "to": "backend/node_modules/consola",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/content-disposition",
+        "to": "backend/node_modules/content-disposition",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/content-type",
+        "to": "backend/node_modules/content-type",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/cookie",
+        "to": "backend/node_modules/cookie",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/cookie-signature",
+        "to": "backend/node_modules/cookie-signature",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/cors",
+        "to": "backend/node_modules/cors",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/debug",
+        "to": "backend/node_modules/debug",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/deepmerge-ts",
+        "to": "backend/node_modules/deepmerge-ts",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/defu",
+        "to": "backend/node_modules/defu",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/depd",
+        "to": "backend/node_modules/depd",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/destr",
+        "to": "backend/node_modules/destr",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/destroy",
+        "to": "backend/node_modules/destroy",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/dotenv",
+        "to": "backend/node_modules/dotenv",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/dotenv-expand",
+        "to": "backend/node_modules/dotenv-expand",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/dunder-proto",
+        "to": "backend/node_modules/dunder-proto",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/ecdsa-sig-formatter",
+        "to": "backend/node_modules/ecdsa-sig-formatter",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/ee-first",
+        "to": "backend/node_modules/ee-first",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/effect",
+        "to": "backend/node_modules/effect",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/empathic",
+        "to": "backend/node_modules/empathic",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/encodeurl",
+        "to": "backend/node_modules/encodeurl",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/es-define-property",
+        "to": "backend/node_modules/es-define-property",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/es-errors",
+        "to": "backend/node_modules/es-errors",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/es-object-atoms",
+        "to": "backend/node_modules/es-object-atoms",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/escape-html",
+        "to": "backend/node_modules/escape-html",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/etag",
+        "to": "backend/node_modules/etag",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/express",
+        "to": "backend/node_modules/express",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/exsolve",
+        "to": "backend/node_modules/exsolve",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/fast-check",
+        "to": "backend/node_modules/fast-check",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/fast-safe-stringify",
+        "to": "backend/node_modules/fast-safe-stringify",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/fflate",
+        "to": "backend/node_modules/fflate",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/file-type",
+        "to": "backend/node_modules/file-type",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/fill-range",
+        "to": "backend/node_modules/fill-range",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/finalhandler",
+        "to": "backend/node_modules/finalhandler",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/forwarded",
+        "to": "backend/node_modules/forwarded",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/fresh",
+        "to": "backend/node_modules/fresh",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/function-bind",
+        "to": "backend/node_modules/function-bind",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/get-intrinsic",
+        "to": "backend/node_modules/get-intrinsic",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/get-proto",
+        "to": "backend/node_modules/get-proto",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/giget",
+        "to": "backend/node_modules/giget",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/glob-parent",
+        "to": "backend/node_modules/glob-parent",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/gopd",
+        "to": "backend/node_modules/gopd",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/has-flag",
+        "to": "backend/node_modules/has-flag",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/has-symbols",
+        "to": "backend/node_modules/has-symbols",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/hasown",
+        "to": "backend/node_modules/hasown",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/http-errors",
+        "to": "backend/node_modules/http-errors",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/iconv-lite",
+        "to": "backend/node_modules/iconv-lite",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/ieee754",
+        "to": "backend/node_modules/ieee754",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/inherits",
+        "to": "backend/node_modules/inherits",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/ipaddr.js",
+        "to": "backend/node_modules/ipaddr.js",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/is-binary-path",
+        "to": "backend/node_modules/is-binary-path",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/is-extglob",
+        "to": "backend/node_modules/is-extglob",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/is-glob",
+        "to": "backend/node_modules/is-glob",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/is-number",
+        "to": "backend/node_modules/is-number",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/iterare",
+        "to": "backend/node_modules/iterare",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/jiti",
+        "to": "backend/node_modules/jiti",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/jsonwebtoken",
+        "to": "backend/node_modules/jsonwebtoken",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/jwa",
+        "to": "backend/node_modules/jwa",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/jws",
+        "to": "backend/node_modules/jws",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/libphonenumber-js",
+        "to": "backend/node_modules/libphonenumber-js",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/lodash",
+        "to": "backend/node_modules/lodash",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/lodash.includes",
+        "to": "backend/node_modules/lodash.includes",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/lodash.isboolean",
+        "to": "backend/node_modules/lodash.isboolean",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/lodash.isinteger",
+        "to": "backend/node_modules/lodash.isinteger",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/lodash.isnumber",
+        "to": "backend/node_modules/lodash.isnumber",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/lodash.isplainobject",
+        "to": "backend/node_modules/lodash.isplainobject",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/lodash.isstring",
+        "to": "backend/node_modules/lodash.isstring",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/lodash.once",
+        "to": "backend/node_modules/lodash.once",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/math-intrinsics",
+        "to": "backend/node_modules/math-intrinsics",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/media-typer",
+        "to": "backend/node_modules/media-typer",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/merge-descriptors",
+        "to": "backend/node_modules/merge-descriptors",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/methods",
+        "to": "backend/node_modules/methods",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/mime",
+        "to": "backend/node_modules/mime",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/mime-db",
+        "to": "backend/node_modules/mime-db",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/mime-types",
+        "to": "backend/node_modules/mime-types",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/minimist",
+        "to": "backend/node_modules/minimist",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/mkdirp",
+        "to": "backend/node_modules/mkdirp",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/ms",
+        "to": "backend/node_modules/ms",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/multer",
+        "to": "backend/node_modules/multer",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/negotiator",
+        "to": "backend/node_modules/negotiator",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/node-fetch",
+        "to": "backend/node_modules/node-fetch",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/node-fetch-native",
+        "to": "backend/node_modules/node-fetch-native",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/normalize-path",
+        "to": "backend/node_modules/normalize-path",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/nypm",
+        "to": "backend/node_modules/nypm",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/object-assign",
+        "to": "backend/node_modules/object-assign",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/object-inspect",
+        "to": "backend/node_modules/object-inspect",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/ohash",
+        "to": "backend/node_modules/ohash",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/on-finished",
+        "to": "backend/node_modules/on-finished",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/parseurl",
+        "to": "backend/node_modules/parseurl",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/passport",
+        "to": "backend/node_modules/passport",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/passport-jwt",
+        "to": "backend/node_modules/passport-jwt",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/passport-strategy",
+        "to": "backend/node_modules/passport-strategy",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/path-to-regexp",
+        "to": "backend/node_modules/path-to-regexp",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/pathe",
+        "to": "backend/node_modules/pathe",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/pause",
+        "to": "backend/node_modules/pause",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/perfect-debounce",
+        "to": "backend/node_modules/perfect-debounce",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/picomatch",
+        "to": "backend/node_modules/picomatch",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/pkg-types",
+        "to": "backend/node_modules/pkg-types",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/prisma",
+        "to": "backend/node_modules/prisma",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/proxy-addr",
+        "to": "backend/node_modules/proxy-addr",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/pure-rand",
+        "to": "backend/node_modules/pure-rand",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/qs",
+        "to": "backend/node_modules/qs",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/range-parser",
+        "to": "backend/node_modules/range-parser",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/raw-body",
+        "to": "backend/node_modules/raw-body",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/rc9",
+        "to": "backend/node_modules/rc9",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/readable-stream",
+        "to": "backend/node_modules/readable-stream",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/readdirp",
+        "to": "backend/node_modules/readdirp",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/reflect-metadata",
+        "to": "backend/node_modules/reflect-metadata",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/rxjs",
+        "to": "backend/node_modules/rxjs",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/safe-buffer",
+        "to": "backend/node_modules/safe-buffer",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/safer-buffer",
+        "to": "backend/node_modules/safer-buffer",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/semver",
+        "to": "backend/node_modules/semver",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/send",
+        "to": "backend/node_modules/send",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/serve-static",
+        "to": "backend/node_modules/serve-static",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/setprototypeof",
+        "to": "backend/node_modules/setprototypeof",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/side-channel",
+        "to": "backend/node_modules/side-channel",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/side-channel-list",
+        "to": "backend/node_modules/side-channel-list",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/side-channel-map",
+        "to": "backend/node_modules/side-channel-map",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/side-channel-weakmap",
+        "to": "backend/node_modules/side-channel-weakmap",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/statuses",
+        "to": "backend/node_modules/statuses",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/streamsearch",
+        "to": "backend/node_modules/streamsearch",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/string_decoder",
+        "to": "backend/node_modules/string_decoder",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/strtok3",
+        "to": "backend/node_modules/strtok3",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/supports-color",
+        "to": "backend/node_modules/supports-color",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/tinyexec",
+        "to": "backend/node_modules/tinyexec",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/to-regex-range",
+        "to": "backend/node_modules/to-regex-range",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/toidentifier",
+        "to": "backend/node_modules/toidentifier",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/token-types",
+        "to": "backend/node_modules/token-types",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/tr46",
+        "to": "backend/node_modules/tr46",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/tslib",
+        "to": "backend/node_modules/tslib",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/type-is",
+        "to": "backend/node_modules/type-is",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/typedarray",
+        "to": "backend/node_modules/typedarray",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/uid",
+        "to": "backend/node_modules/uid",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/uint8array-extras",
+        "to": "backend/node_modules/uint8array-extras",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/undici-types",
+        "to": "backend/node_modules/undici-types",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/unpipe",
+        "to": "backend/node_modules/unpipe",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/util-deprecate",
+        "to": "backend/node_modules/util-deprecate",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/utils-merge",
+        "to": "backend/node_modules/utils-merge",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/validator",
+        "to": "backend/node_modules/validator",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/vary",
+        "to": "backend/node_modules/vary",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/webidl-conversions",
+        "to": "backend/node_modules/webidl-conversions",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/whatwg-url",
+        "to": "backend/node_modules/whatwg-url",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../node_modules/xtend",
+        "to": "backend/node_modules/xtend",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../packages/config/dist",
+        "to": "backend/node_modules/@attendance/config/dist",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../../packages/config/package.json",
+        "to": "backend/node_modules/@attendance/config/package.json"
+      }
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
+}
