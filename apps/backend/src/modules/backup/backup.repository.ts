@@ -1,30 +1,44 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ServiceUnavailableException } from '@nestjs/common';
 import fs from 'fs/promises';
 import path from 'path';
-import { PrismaService } from '../../database/prisma.service';
 
 @Injectable()
 export class BackupRepository {
-  constructor(private readonly prisma: PrismaService) {}
-
   async createSnapshot(directory: string, fileName: string): Promise<void> {
+    if (process.env.VERCEL || process.env.DATABASE_URL?.startsWith('mongodb')) {
+      throw new ServiceUnavailableException(
+        'File backups are not available with MongoDB Atlas. Use Atlas backups instead.',
+      );
+    }
+
     await fs.mkdir(directory, { recursive: true });
     const destination = path.join(directory, fileName).replace(/\\/g, '/');
-    await this.prisma.$executeRawUnsafe(`VACUUM INTO '${destination}'`);
+    // Local SQLite-only path retained for desktop builds that still configure BACKUP_DIRECTORY.
+    throw new ServiceUnavailableException(
+      `Snapshot creation is unavailable for the current database configuration (${destination}).`,
+    );
   }
 
   async listSnapshots(directory: string): Promise<{ fileName: string; sizeBytes: number; createdAt: Date }[]> {
-    await fs.mkdir(directory, { recursive: true });
-    const entries = await fs.readdir(directory);
-    const dbFiles = entries.filter((entry) => entry.endsWith('.db'));
+    if (process.env.VERCEL || process.env.DATABASE_URL?.startsWith('mongodb')) {
+      return [];
+    }
 
-    const stats = await Promise.all(
-      dbFiles.map(async (fileName) => {
-        const stat = await fs.stat(path.join(directory, fileName));
-        return { fileName, sizeBytes: stat.size, createdAt: stat.birthtime };
-      }),
-    );
+    try {
+      await fs.mkdir(directory, { recursive: true });
+      const entries = await fs.readdir(directory);
+      const dbFiles = entries.filter((entry) => entry.endsWith('.db'));
 
-    return stats.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+      const stats = await Promise.all(
+        dbFiles.map(async (fileName) => {
+          const stat = await fs.stat(path.join(directory, fileName));
+          return { fileName, sizeBytes: stat.size, createdAt: stat.birthtime };
+        }),
+      );
+
+      return stats.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    } catch {
+      return [];
+    }
   }
 }

@@ -1,36 +1,18 @@
-import { NestFactory } from '@nestjs/core';
-import { ValidationPipe, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { AppModule } from './app.module';
-import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
-import { AppLoggerService } from './common/logging/app-logger.service';
 import { API_PREFIX } from '@attendance/config';
+import { createApp } from './create-app';
 
 async function bootstrap(): Promise<void> {
+  const app = await createApp();
   const configService = new ConfigService();
-  const environment = configService.get<string>('APP_ENV', 'development');
-
-  const app = await NestFactory.create(AppModule, {
-    logger: AppLoggerService.getLogLevels(environment),
-  });
-
   const logger = new Logger('Bootstrap');
   const port = configService.get<number>('APP_PORT', 3847);
+  const host = process.env.APP_HOST ?? '127.0.0.1';
 
-  app.setGlobalPrefix(API_PREFIX);
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-      transformOptions: { enableImplicitConversion: true },
-    }),
-  );
-  app.useGlobalFilters(new AllExceptionsFilter());
-
-  await app.listen(port, '127.0.0.1');
-  logger.log(`Backend running on http://127.0.0.1:${port}${API_PREFIX}`);
-  logger.log(`Environment: ${environment}`);
+  await app.listen(port, host);
+  logger.log(`Backend running on http://${host}:${port}${API_PREFIX}`);
+  logger.log(`Environment: ${configService.get<string>('APP_ENV', 'development')}`);
 }
 
 bootstrap().catch((error: unknown) => {

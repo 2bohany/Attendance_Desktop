@@ -23,17 +23,23 @@
     "postinstall": "npm run db:generate -w @attendance/backend",
     "predev": "npm run build -w @attendance/config && npm run build -w @attendance/shared && npm run build -w @attendance/backend",
     "electron:dev": "npm run dev -w @attendance/desktop",
-    "electron:build": "npm run build -w @attendance/desktop"
+    "dev:web": "npm run dev:web -w @attendance/desktop",
+    "electron:build": "npm run build -w @attendance/desktop",
+    "db:push": "npm run db:push -w @attendance/backend",
+    "build:vercel": "npm run build -w @attendance/config && npm run build -w @attendance/shared && npm run db:generate -w @attendance/backend && npm run build -w @attendance/backend && cross-env VITE_ELECTRON=false npm run build:renderer -w @attendance/desktop",
+    "deploy:web": "npx vercel --prod"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.18.0",
     "@typescript-eslint/parser": "^8.18.0",
+    "cross-env": "^7.0.3",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-react": "^7.37.2",
     "eslint-plugin-react-hooks": "^5.1.0",
     "prettier": "^3.4.2",
     "typescript": "^5.7.2",
+    "vercel": "^48.12.1",
     "vitest": "^2.1.8"
   },
   "engines": {

@@ -3,22 +3,20 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 model AppMeta {
-  id        String   @id @default(cuid())
+  id        String   @id @default(cuid()) @map("_id")
   key       String   @unique
   value     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-// Phase 1: Auth / Users / Roles / Permissions foundation
-
 model User {
-  id           String    @id @default(cuid())
+  id           String    @id @default(cuid()) @map("_id")
   username     String    @unique
   email        String?   @unique
   passwordHash String
@@ -32,7 +30,7 @@ model User {
 }
 
 model Role {
-  id          String           @id @default(cuid())
+  id          String           @id @default(cuid()) @map("_id")
   name        String           @unique
   description String?
   isSystem    Boolean          @default(false)
@@ -43,7 +41,7 @@ model Role {
 }
 
 model Permission {
-  id          String           @id @default(cuid())
+  id          String           @id @default(cuid()) @map("_id")
   key         String           @unique
   description String?
   roles       RolePermission[]
@@ -51,18 +49,17 @@ model Permission {
 }
 
 model RolePermission {
+  id           String     @id @default(cuid()) @map("_id")
   roleId       String
   permissionId String
   role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
   permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
 
-  @@id([roleId, permissionId])
+  @@unique([roleId, permissionId])
 }
 
-// Phase 2: Employees foundation
-
 model Department {
-  id          String     @id @default(cuid())
+  id          String     @id @default(cuid()) @map("_id")
   name        String     @unique
   description String?
   employees   Employee[]
@@ -71,7 +68,7 @@ model Department {
 }
 
 model Employee {
-  id                String             @id @default(cuid())
+  id                String             @id @default(cuid()) @map("_id")
   employeeCode      String             @unique
   fullName          String
   email             String?            @unique
@@ -88,10 +85,8 @@ model Employee {
   updatedAt         DateTime           @updatedAt
 }
 
-// Phase 3: Attendance / Leaves / Holidays / Reports / Settings / Backup foundation
-
 model AttendanceRecord {
-  id         String    @id @default(cuid())
+  id         String    @id @default(cuid()) @map("_id")
   employeeId String
   employee   Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
   date       DateTime
@@ -105,7 +100,7 @@ model AttendanceRecord {
 }
 
 model LeaveType {
-  id          String   @id @default(cuid())
+  id          String   @id @default(cuid()) @map("_id")
   name        String   @unique
   description String?
   leaves      Leave[]
@@ -113,7 +108,7 @@ model LeaveType {
 }
 
 model Leave {
-  id          String    @id @default(cuid())
+  id          String    @id @default(cuid()) @map("_id")
   employeeId  String
   employee    Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
   leaveTypeId String
@@ -121,14 +116,13 @@ model Leave {
   startDate   DateTime
   endDate     DateTime
   reason      String?
-  // PENDING | APPROVED | REJECTED — plain string because SQLite has no native enum type
   status      String    @default("PENDING")
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
 
 model Holiday {
-  id          String   @id @default(cuid())
+  id          String   @id @default(cuid()) @map("_id")
   name        String
   date        DateTime @unique
   description String?
@@ -136,7 +130,7 @@ model Holiday {
 }
 
 model AuditLog {
-  id         String   @id @default(cuid())
+  id         String   @id @default(cuid()) @map("_id")
   action     String
   entityType String
   entityId   String?

@@ -1,0 +1,17 @@
+node_modules/**
+**/node_modules/**
+apps/desktop/release/**
+**/release/**
+apps/desktop/dist-electron/**
+apps/desktop/dist/**
+apps/backend/dist/**
+.git/**
+.claude/**
+.web-data/**
+*.db
+*.db-journal
+*.log
+coverage/**
+.turbo/**
+.vscode/**
+.idea/**

@@ -4,6 +4,9 @@ dist-electron/
 build/
 out/
 .env
+.env.local
+.env.*.local
+.vercel
 coverage/
 *.log
 *.tmp
@@ -16,3 +19,5 @@ Thumbs.db
 *.db
 *.db-journal
 release/
+.web-data/
+.env*.local

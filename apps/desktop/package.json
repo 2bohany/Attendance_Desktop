@@ -5,6 +5,7 @@
   "main": "dist-electron/main.js",
   "scripts": {
     "dev": "vite",
+    "dev:web": "cross-env VITE_ELECTRON=false vite",
     "build": "tsc -p tsconfig.electron.json && vite build && electron-builder",
     "build:renderer": "cross-env VITE_ELECTRON=false vite build",
     "build:electron": "tsc -p tsconfig.electron.json",
