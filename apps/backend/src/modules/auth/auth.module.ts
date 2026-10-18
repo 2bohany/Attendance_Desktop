@@ -17,13 +17,15 @@ import { JwtAuthGuard, PermissionsGuard } from '../../common/guards';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('app.jwtSecret') || 'insecure-development-secret',
-        signOptions: {
-          expiresIn: (configService.get<string>('app.jwtExpiresIn') ||
-            DEFAULT_JWT_EXPIRES_IN) as JwtSignOptions['expiresIn'],
-        },
-      }),
+      useFactory: (configService: ConfigService) => {
+        const configured = (configService.get<string>('app.jwtExpiresIn') || '').trim();
+        const expiresIn = (configured || DEFAULT_JWT_EXPIRES_IN) as JwtSignOptions['expiresIn'];
+
+        return {
+          secret: configService.get<string>('app.jwtSecret') || 'insecure-development-secret',
+          signOptions: { expiresIn },
+        };
+      },
     }),
   ],
   controllers: [AuthController],
