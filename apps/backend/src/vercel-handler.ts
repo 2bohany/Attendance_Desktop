@@ -2,6 +2,11 @@ import type { IncomingMessage, ServerResponse } from 'http';
 import type { INestApplication } from '@nestjs/common';
 import { createApp } from './create-app';
 
+type VercelRequest = IncomingMessage & {
+  body?: unknown;
+  _body?: boolean;
+};
+
 type ExpressHandler = (req: IncomingMessage, res: ServerResponse) => void;
 
 let cachedHandler: ExpressHandler | undefined;
@@ -19,7 +24,13 @@ async function getHandler(): Promise<ExpressHandler> {
   return cachedHandler;
 }
 
-export default async function handler(req: IncomingMessage, res: ServerResponse): Promise<void> {
+export default async function handler(req: VercelRequest, res: ServerResponse): Promise<void> {
+  // Vercel pre-parses JSON into req.body. Mark the body as already consumed so
+  // Express body-parser does not replace it with an empty object.
+  if (req.body !== undefined && req._body !== true) {
+    req._body = true;
+  }
+
   const expressHandler = await getHandler();
   expressHandler(req, res);
 }
