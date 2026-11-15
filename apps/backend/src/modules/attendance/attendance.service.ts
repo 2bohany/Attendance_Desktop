@@ -2,11 +2,8 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import type { AttendanceRecord, AttendanceStatus } from '@attendance/shared';
 import { AttendanceRepository, type AttendanceRecordWithEmployee } from './attendance.repository';
 import { AuditLogService } from '../../database/audit-log.service';
+import { businessDay } from '../../common/utils/business-day';
 
-function normalizeToDay(input?: string): Date {
-  const isoDay = input ?? new Date().toISOString().slice(0, 10);
-  return new Date(`${isoDay}T00:00:00.000Z`);
-}
 
 function toAttendanceRecord(record: AttendanceRecordWithEmployee): AttendanceRecord {
   const status: AttendanceStatus = record.checkOut ? 'PRESENT' : 'INCOMPLETE';
@@ -29,12 +26,12 @@ export class AttendanceService {
   ) {}
 
   async listForDate(date?: string): Promise<AttendanceRecord[]> {
-    const records = await this.attendanceRepository.findByDate(normalizeToDay(date));
+    const records = await this.attendanceRepository.findByDate(businessDay(date));
     return records.map(toAttendanceRecord);
   }
 
   async checkIn(employeeId: string, actorUserId: string): Promise<void> {
-    const today = normalizeToDay();
+    const today = businessDay();
     const existing = await this.attendanceRepository.findByEmployeeAndDate(employeeId, today);
     if (existing) {
       throw new ConflictException('Employee has already checked in today');
@@ -50,7 +47,7 @@ export class AttendanceService {
   }
 
   async checkOut(employeeId: string, actorUserId: string): Promise<void> {
-    const today = normalizeToDay();
+    const today = businessDay();
     const existing = await this.attendanceRepository.findByEmployeeAndDate(employeeId, today);
     if (!existing) {
       throw new NotFoundException('Employee has not checked in today');

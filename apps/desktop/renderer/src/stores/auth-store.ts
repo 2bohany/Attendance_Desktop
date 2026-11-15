@@ -2,27 +2,48 @@ import { create } from 'zustand';
 import type { AuthUser } from '@attendance/shared';
 import { apiRequest } from '@/services/api-client';
 
+/**
+ * `restoring`: checking whether a stored token is still valid (page refresh).
+ * The UI shows a loader instead of flashing the login screen.
+ */
+type AuthStatus = 'restoring' | 'authenticated' | 'anonymous';
+
 type AuthState = {
   user: AuthUser | null;
+  status: AuthStatus;
   isAuthenticated: boolean;
   setSession: (user: AuthUser, accessToken: string) => Promise<void>;
   clearSession: () => Promise<void>;
+  restoreSession: () => Promise<void>;
   hasPermission: (permissionKey: string) => boolean;
   refreshCurrentUser: () => Promise<void>;
 };
 
 export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
+  status: 'restoring',
   isAuthenticated: false,
 
   setSession: async (user, accessToken) => {
     await window.electronAPI.setAuthToken(accessToken);
-    set({ user, isAuthenticated: true });
+    set({ user, status: 'authenticated', isAuthenticated: true });
   },
 
   clearSession: async () => {
     await window.electronAPI.clearAuthToken();
-    set({ user: null, isAuthenticated: false });
+    set({ user: null, status: 'anonymous', isAuthenticated: false });
+  },
+
+  restoreSession: async () => {
+    const response = await apiRequest<AuthUser>({ method: 'GET', path: '/auth/me' });
+    if (response.success && response.data) {
+      set({ user: response.data, status: 'authenticated', isAuthenticated: true });
+      return;
+    }
+    if (response.status === 401 || response.status === 403) {
+      await window.electronAPI.clearAuthToken();
+    }
+    set({ user: null, status: 'anonymous', isAuthenticated: false });
   },
 
   hasPermission: (permissionKey) => {

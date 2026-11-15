@@ -20,14 +20,14 @@ export function ErrorState({
   return (
     <div
       className={cn(
-        'flex flex-col items-center justify-center rounded-lg border border-destructive/20 bg-destructive/5 p-12 text-center',
+        'flex flex-col items-center justify-center rounded-lg border border-destructive/25 bg-destructive-soft/60 px-6 py-12 text-center',
         className,
       )}
     >
-      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
-        <AlertCircle className="h-6 w-6 text-destructive" />
+      <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-full bg-destructive-soft">
+        <AlertCircle className="h-5 w-5 text-destructive" />
       </div>
-      <h3 className="text-lg font-semibold">{title}</h3>
+      <h3 className="text-base font-semibold">{title}</h3>
       {description && <p className="mt-2 max-w-sm text-sm text-muted-foreground">{description}</p>}
       {onRetry && (
         <Button variant="outline" className="mt-4" onClick={onRetry}>

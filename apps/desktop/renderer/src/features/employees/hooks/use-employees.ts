@@ -4,10 +4,11 @@ import { createEmployee, listEmployees, setEmployeeActive, updateEmployee } from
 
 const EMPLOYEES_QUERY_KEY = ['employees'];
 
-export function useEmployees() {
+export function useEmployees(enabled = true) {
   return useQuery({
     queryKey: EMPLOYEES_QUERY_KEY,
     queryFn: listEmployees,
+    enabled,
   });
 }
 
@@ -17,6 +18,7 @@ export function useCreateEmployee() {
     mutationFn: (input: EmployeeFormInput) => createEmployee(input),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: EMPLOYEES_QUERY_KEY });
+      void queryClient.invalidateQueries({ queryKey: ['reports'] });
     },
   });
 }
@@ -27,6 +29,7 @@ export function useUpdateEmployee() {
     mutationFn: ({ id, input }: { id: string; input: EmployeeFormInput }) => updateEmployee(id, input),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: EMPLOYEES_QUERY_KEY });
+      void queryClient.invalidateQueries({ queryKey: ['reports'] });
     },
   });
 }
@@ -38,6 +41,7 @@ export function useSetEmployeeActive() {
       setEmployeeActive(id, isActive),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: EMPLOYEES_QUERY_KEY });
+      void queryClient.invalidateQueries({ queryKey: ['reports'] });
     },
   });
 }

@@ -3,10 +3,12 @@ import type { BootstrapAdminInput, LoginInput } from '@attendance/shared';
 import { useAuthStore } from '@/stores/auth-store';
 import { bootstrapAdmin, getSetupStatus, login } from '../services/auth-api';
 
-export function useSetupStatus() {
+export function useSetupStatus(enabled = true) {
   return useQuery({
     queryKey: ['auth', 'setup-status'],
     queryFn: getSetupStatus,
+    enabled,
+    staleTime: 0,
     retry: 2,
     // The backend takes a moment to come up after the window appears; keep polling
     // until it answers instead of settling into a permanent error after the initial

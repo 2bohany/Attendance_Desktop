@@ -5,6 +5,7 @@ import { employeeFormSchema, type Employee, type EmployeeFormInput, type Departm
 import { toast } from 'sonner';
 import { useAppStore } from '@/stores/app-store';
 import { t } from '@/lib/i18n';
+import { localIsoDay } from '@/lib/format';
 import {
   Dialog,
   DialogContent,
@@ -54,7 +55,7 @@ export function EmployeeFormDialog({ departments, trigger, employee }: EmployeeF
           notes: employee.notes ?? '',
           departmentId: employee.department?.id ?? '',
         }
-      : { hireDate: new Date().toISOString().slice(0, 10) },
+      : { hireDate: localIsoDay() },
   });
 
   const onSubmit = (values: EmployeeFormInput) => {
@@ -101,7 +102,7 @@ export function EmployeeFormDialog({ departments, trigger, employee }: EmployeeF
             {errors.fullName && <p className="text-xs text-destructive">{errors.fullName.message}</p>}
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="email">{t(locale, 'employees.field.email')}</Label>
               <Input id="email" type="email" {...register('email')} />
@@ -113,7 +114,7 @@ export function EmployeeFormDialog({ departments, trigger, employee }: EmployeeF
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="jobTitle">{t(locale, 'employees.field.jobTitle')}</Label>
               <Input id="jobTitle" {...register('jobTitle')} />

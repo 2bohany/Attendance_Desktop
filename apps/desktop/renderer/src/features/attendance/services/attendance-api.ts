@@ -8,8 +8,9 @@ function unwrap<T>(response: { success: boolean; data?: T; error?: string }): T 
   return response.data;
 }
 
-export async function listTodayAttendance(): Promise<AttendanceRecord[]> {
-  const response = await apiRequest<AttendanceRecord[]>({ method: 'GET', path: '/attendance' });
+export async function listAttendance(date?: string): Promise<AttendanceRecord[]> {
+  const path = date ? `/attendance?date=${encodeURIComponent(date)}` : '/attendance';
+  const response = await apiRequest<AttendanceRecord[]>({ method: 'GET', path });
   return unwrap(response);
 }
 

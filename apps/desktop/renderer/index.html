@@ -1,15 +1,20 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" dir="ltr">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self' http://localhost:* ws://localhost:*"
+      content="default-src 'self'; script-src 'self' 'sha256-1QrJ8+0tMeIGa8DZunNDem0Q2DFgbwEQVSUX5epq/60='; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; connect-src 'self' http://localhost:* http://127.0.0.1:* ws://localhost:*"
     />
-    <title>AttendanceApp</title>
+    <meta name="description" content="Track daily attendance, approve leave and manage your staff directory." />
+    <meta name="theme-color" content="#f6f8fa" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <title>Attendance</title>
+    <script>(function(){try{var p=JSON.parse(localStorage.getItem('attendance.preferences')||'{}');var t=p.theme||'system';var d=t==='dark'||(t==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);var r=document.documentElement;r.classList.add(d?'dark':'light');if(p.locale==='ar'){r.lang='ar';r.dir='rtl';}}catch(e){}})();</script>
   </head>
   <body>
+    <noscript>This app needs JavaScript enabled to run.</noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

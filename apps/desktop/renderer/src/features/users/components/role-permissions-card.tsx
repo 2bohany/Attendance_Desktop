@@ -54,12 +54,12 @@ export function RolePermissionsCard({ role, allPermissions, canEdit }: RolePermi
         {role.description && <CardDescription>{role.description}</CardDescription>}
       </CardHeader>
       <CardContent className="space-y-3">
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid gap-2 sm:grid-cols-2">
           {allPermissions.map((permission) => (
             <label key={permission.id} className="flex items-center gap-2 text-sm">
               <input
                 type="checkbox"
-                className="h-4 w-4 rounded border-input"
+                className="h-4 w-4 rounded border-input accent-primary"
                 checked={selected.has(permission.key)}
                 disabled={role.isSystem || !canEdit}
                 onChange={() => toggle(permission.key)}

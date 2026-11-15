@@ -1,55 +1,62 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import type { BackupFile } from '@attendance/shared';
+import { Injectable } from '@nestjs/common';
+import type { BackupExport, BackupFile } from '@attendance/shared';
 import { BackupRepository } from './backup.repository';
 import { AuditLogService } from '../../database/audit-log.service';
+
+const HISTORY_LIMIT = 20;
+const EXPORT_FORMAT_VERSION = 1;
+
+type ExportMetadata = { fileName?: string; sizeBytes?: number };
+
+function parseMetadata(raw: string | null): ExportMetadata {
+  if (!raw) return {};
+  try {
+    return JSON.parse(raw) as ExportMetadata;
+  } catch {
+    return {};
+  }
+}
 
 @Injectable()
 export class BackupService {
   constructor(
     private readonly backupRepository: BackupRepository,
-    private readonly configService: ConfigService,
     private readonly auditLogService: AuditLogService,
   ) {}
 
-  async create(actorUserId: string): Promise<BackupFile> {
-    const directory = this.getBackupDirectory();
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const fileName = `attendance-backup-${timestamp}.db`;
+  /**
+   * Builds a full JSON export of the company's data. The server keeps no file;
+   * the browser downloads the payload. Database-level backups are handled by
+   * MongoDB Atlas.
+   */
+  async create(actorUserId: string): Promise<BackupExport> {
+    const exportedAt = new Date().toISOString();
+    const fileName = `attendance-backup-${exportedAt.replace(/[:.]/g, '-')}.json`;
+    const data = await this.backupRepository.readAllData();
 
-    await this.backupRepository.createSnapshot(directory, fileName);
+    const payload = { format: 'attendance-backup' as const, version: EXPORT_FORMAT_VERSION, exportedAt, data };
+    const sizeBytes = Buffer.byteLength(JSON.stringify(payload), 'utf8');
+
     await this.auditLogService.record({
       action: 'backup.create',
       entityType: 'Backup',
       entityId: fileName,
       userId: actorUserId,
+      metadata: { fileName, sizeBytes },
     });
 
-    const snapshots = await this.backupRepository.listSnapshots(directory);
-    const created = snapshots.find((snapshot) => snapshot.fileName === fileName);
-
-    return {
-      fileName,
-      sizeBytes: created?.sizeBytes ?? 0,
-      createdAt: (created?.createdAt ?? new Date()).toISOString(),
-    };
+    return { ...payload, fileName, sizeBytes };
   }
 
   async list(): Promise<BackupFile[]> {
-    const directory = this.getBackupDirectory();
-    const snapshots = await this.backupRepository.listSnapshots(directory);
-    return snapshots.map((snapshot) => ({
-      fileName: snapshot.fileName,
-      sizeBytes: snapshot.sizeBytes,
-      createdAt: snapshot.createdAt.toISOString(),
-    }));
-  }
-
-  private getBackupDirectory(): string {
-    const directory = this.configService.get<string>('app.backupDirectory');
-    if (!directory) {
-      throw new InternalServerErrorException('Backup directory is not configured');
-    }
-    return directory;
+    const entries = await this.backupRepository.findRecentExports(HISTORY_LIMIT);
+    return entries.map((entry) => {
+      const metadata = parseMetadata(entry.metadata);
+      return {
+        fileName: metadata.fileName ?? entry.entityId ?? 'attendance-backup.json',
+        sizeBytes: metadata.sizeBytes ?? 0,
+        createdAt: entry.createdAt.toISOString(),
+      };
+    });
   }
 }

@@ -1,5 +1,5 @@
 import { Controller, Get, Post } from '@nestjs/common';
-import type { BackupFile } from '@attendance/shared';
+import type { BackupExport, BackupFile } from '@attendance/shared';
 import { CurrentUser, RequirePermissions } from '../../common/decorators';
 import type { RequestUser } from '../../common/types/request-user.type';
 import { BackupService } from './backup.service';
@@ -16,7 +16,7 @@ export class BackupController {
 
   @Post()
   @RequirePermissions('backup.create')
-  create(@CurrentUser() user: RequestUser): Promise<BackupFile> {
+  create(@CurrentUser() user: RequestUser): Promise<BackupExport> {
     return this.backupService.create(user.id);
   }
 }

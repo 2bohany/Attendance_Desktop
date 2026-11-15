@@ -1,209 +1,8 @@
 import type { Locale } from '@attendance/shared';
 
-type TranslationKeys = {
-  'app.name': string;
-  'app.tagline': string;
-  'nav.dashboard': string;
-  'nav.employees': string;
-  'nav.attendance': string;
-  'nav.users': string;
-  'nav.leaves': string;
-  'nav.holidays': string;
-  'nav.reports': string;
-  'nav.settings': string;
-  'nav.backup': string;
-  'page.dashboard.title': string;
-  'page.dashboard.description': string;
-  'page.comingSoon': string;
-  'page.comingSoonDescription': string;
-  'status.connected': string;
-  'status.disconnected': string;
-  'status.checking': string;
-  'topbar.toggleTheme': string;
-  'topbar.toggleLanguage': string;
-  'empty.title': string;
-  'empty.description': string;
-  'error.title': string;
-  'error.description': string;
-  'error.retry': string;
-  'common.cancel': string;
-  'common.save': string;
-  'common.create': string;
-  'common.loading': string;
-  'auth.setup.title': string;
-  'auth.setup.description': string;
-  'auth.login.title': string;
-  'auth.login.description': string;
-  'auth.field.username': string;
-  'auth.field.email': string;
-  'auth.field.fullName': string;
-  'auth.field.password': string;
-  'auth.field.role': string;
-  'auth.action.createAccount': string;
-  'auth.action.signIn': string;
-  'auth.action.signOut': string;
-  'auth.loggedInAs': string;
-  'users.title': string;
-  'users.description': string;
-  'users.tab.users': string;
-  'users.tab.roles': string;
-  'users.table.username': string;
-  'users.table.fullName': string;
-  'users.table.email': string;
-  'users.table.role': string;
-  'users.table.status': string;
-  'users.table.lastLogin': string;
-  'users.table.actions': string;
-  'users.status.active': string;
-  'users.status.inactive': string;
-  'users.action.createUser': string;
-  'users.action.edit': string;
-  'users.action.deactivate': string;
-  'users.action.activate': string;
-  'users.createDialog.title': string;
-  'users.createDialog.description': string;
-  'users.editDialog.title': string;
-  'users.editDialog.description': string;
-  'users.editDialog.passwordHint': string;
-  'users.field.newPassword': string;
-  'users.neverLoggedIn': string;
-  'roles.title': string;
-  'roles.description': string;
-  'roles.action.createRole': string;
-  'roles.createDialog.title': string;
-  'roles.createDialog.description': string;
-  'roles.field.name': string;
-  'roles.field.description': string;
-  'roles.field.permissions': string;
-  'roles.systemBadge': string;
-  'employees.title': string;
-  'employees.description': string;
-  'employees.tab.employees': string;
-  'employees.tab.departments': string;
-  'employees.table.code': string;
-  'employees.table.fullName': string;
-  'employees.table.email': string;
-  'employees.table.phone': string;
-  'employees.table.jobTitle': string;
-  'employees.table.department': string;
-  'employees.table.hireDate': string;
-  'employees.table.status': string;
-  'employees.table.actions': string;
-  'employees.status.active': string;
-  'employees.status.inactive': string;
-  'employees.action.createEmployee': string;
-  'employees.action.edit': string;
-  'employees.action.deactivate': string;
-  'employees.action.activate': string;
-  'employees.field.fullName': string;
-  'employees.field.email': string;
-  'employees.field.phone': string;
-  'employees.field.jobTitle': string;
-  'employees.field.hireDate': string;
-  'employees.field.notes': string;
-  'employees.field.department': string;
-  'employees.field.noDepartment': string;
-  'employees.createDialog.title': string;
-  'employees.createDialog.description': string;
-  'employees.editDialog.title': string;
-  'employees.editDialog.description': string;
-  'departments.title': string;
-  'departments.description': string;
-  'departments.table.name': string;
-  'departments.table.description': string;
-  'departments.table.employeeCount': string;
-  'departments.table.actions': string;
-  'departments.action.createDepartment': string;
-  'departments.action.delete': string;
-  'departments.createDialog.title': string;
-  'departments.createDialog.description': string;
-  'departments.field.name': string;
-  'departments.field.description': string;
-  'employees.empty.title': string;
-  'employees.empty.description': string;
-  'departments.empty.title': string;
-  'departments.empty.description': string;
-  'attendance.title': string;
-  'attendance.description': string;
-  'attendance.selectEmployee': string;
-  'attendance.action.checkIn': string;
-  'attendance.action.checkOut': string;
-  'attendance.table.employee': string;
-  'attendance.table.checkIn': string;
-  'attendance.table.checkOut': string;
-  'attendance.table.status': string;
-  'attendance.status.present': string;
-  'attendance.status.incomplete': string;
-  'attendance.empty.title': string;
-  'attendance.empty.description': string;
-  'leaves.title': string;
-  'leaves.description': string;
-  'leaves.tab.requests': string;
-  'leaves.tab.types': string;
-  'leaves.table.employee': string;
-  'leaves.table.type': string;
-  'leaves.table.startDate': string;
-  'leaves.table.endDate': string;
-  'leaves.table.status': string;
-  'leaves.table.actions': string;
-  'leaves.status.pending': string;
-  'leaves.status.approved': string;
-  'leaves.status.rejected': string;
-  'leaves.action.request': string;
-  'leaves.action.approve': string;
-  'leaves.action.reject': string;
-  'leaves.action.createType': string;
-  'leaves.requestDialog.title': string;
-  'leaves.requestDialog.description': string;
-  'leaves.field.employee': string;
-  'leaves.field.leaveType': string;
-  'leaves.field.startDate': string;
-  'leaves.field.endDate': string;
-  'leaves.field.reason': string;
-  'leaves.typeDialog.title': string;
-  'leaves.field.typeName': string;
-  'leaves.empty.title': string;
-  'leaves.empty.description': string;
-  'holidays.title': string;
-  'holidays.description': string;
-  'holidays.action.create': string;
-  'holidays.table.name': string;
-  'holidays.table.date': string;
-  'holidays.table.description': string;
-  'holidays.table.actions': string;
-  'holidays.dialog.title': string;
-  'holidays.field.name': string;
-  'holidays.field.date': string;
-  'holidays.empty.title': string;
-  'holidays.empty.description': string;
-  'reports.title': string;
-  'reports.description': string;
-  'reports.card.totalEmployees': string;
-  'reports.card.activeEmployees': string;
-  'reports.card.presentToday': string;
-  'reports.card.onLeaveToday': string;
-  'reports.byDepartment': string;
-  'reports.upcomingHolidays': string;
-  'reports.noUpcomingHolidays': string;
-  'settings.title': string;
-  'settings.description': string;
-  'settings.field.companyName': string;
-  'settings.field.workStart': string;
-  'settings.field.workEnd': string;
-  'settings.saved': string;
-  'backup.title': string;
-  'backup.description': string;
-  'backup.action.create': string;
-  'backup.table.file': string;
-  'backup.table.size': string;
-  'backup.table.createdAt': string;
-  'backup.empty.title': string;
-  'backup.empty.description': string;
-};
-
-const en: TranslationKeys = {
-  'app.name': 'AttendanceApp',
-  'app.tagline': 'Local Attendance Management',
+const en = {
+  'app.name': 'Attendance',
+  'app.tagline': 'Workforce attendance',
   'nav.dashboard': 'Dashboard',
   'nav.employees': 'Employees',
   'nav.attendance': 'Attendance',
@@ -214,35 +13,35 @@ const en: TranslationKeys = {
   'nav.settings': 'Settings',
   'nav.backup': 'Backup',
   'page.dashboard.title': 'Dashboard',
-  'page.dashboard.description': 'Overview of your attendance management system.',
+  'page.dashboard.description': 'Who is in today and what needs your attention.',
   'page.comingSoon': 'Coming Soon',
   'page.comingSoonDescription': 'This feature will be available in a future phase.',
-  'status.connected': 'Database Connected',
-  'status.disconnected': 'Database Disconnected',
-  'status.checking': 'Checking connection...',
+  'status.connected': 'Connected',
+  'status.disconnected': 'Server unreachable',
+  'status.checking': 'Connecting…',
   'topbar.toggleTheme': 'Toggle theme',
   'topbar.toggleLanguage': 'Toggle language',
   'empty.title': 'No data yet',
-  'empty.description': 'Content will appear here once this feature is implemented.',
+  'empty.description': 'Items you add will appear here.',
   'error.title': 'Something went wrong',
-  'error.description': 'An error occurred while loading this page.',
+  'error.description': 'We couldn\'t load this data. Check your connection and try again.',
   'error.retry': 'Try again',
   'common.cancel': 'Cancel',
   'common.save': 'Save',
   'common.create': 'Create',
-  'common.loading': 'Loading...',
-  'auth.setup.title': 'Create Administrator Account',
-  'auth.setup.description': 'Set up the first administrator account to get started.',
-  'auth.login.title': 'Sign In',
-  'auth.login.description': 'Enter your credentials to access the system.',
+  'common.loading': 'Loading…',
+  'auth.setup.title': 'Create the administrator account',
+  'auth.setup.description': 'This account has full access. You can add more users once you are in.',
+  'auth.login.title': 'Sign in',
+  'auth.login.description': 'Use the username and password your administrator gave you.',
   'auth.field.username': 'Username',
   'auth.field.email': 'Email (optional)',
   'auth.field.fullName': 'Full Name',
   'auth.field.password': 'Password',
   'auth.field.role': 'Role',
-  'auth.action.createAccount': 'Create Account',
-  'auth.action.signIn': 'Sign In',
-  'auth.action.signOut': 'Sign Out',
+  'auth.action.createAccount': 'Create account',
+  'auth.action.signIn': 'Sign in',
+  'auth.action.signOut': 'Sign out',
   'auth.loggedInAs': 'Signed in as',
   'users.title': 'Users',
   'users.description': 'Manage user accounts and access.',
@@ -325,7 +124,7 @@ const en: TranslationKeys = {
   'departments.empty.title': 'No departments yet',
   'departments.empty.description': 'Create a department to start organizing employees.',
   'attendance.title': 'Attendance',
-  'attendance.description': 'Track daily employee check-ins and check-outs.',
+  'attendance.description': 'Record check-ins and check-outs for the day.',
   'attendance.selectEmployee': 'Select an employee',
   'attendance.action.checkIn': 'Check In',
   'attendance.action.checkOut': 'Check Out',
@@ -334,9 +133,9 @@ const en: TranslationKeys = {
   'attendance.table.checkOut': 'Check Out',
   'attendance.table.status': 'Status',
   'attendance.status.present': 'Present',
-  'attendance.status.incomplete': 'Checked In',
-  'attendance.empty.title': 'No check-ins today',
-  'attendance.empty.description': 'Attendance records for today will appear here.',
+  'attendance.status.incomplete': 'Checked in',
+  'attendance.empty.title': 'No active employees',
+  'attendance.empty.description': 'Add employees first, then record their attendance here.',
   'leaves.title': 'Leaves',
   'leaves.description': 'Manage leave requests and leave types.',
   'leaves.tab.requests': 'Requests',
@@ -392,19 +191,109 @@ const en: TranslationKeys = {
   'settings.field.workStart': 'Default Work Start Time',
   'settings.field.workEnd': 'Default Work End Time',
   'settings.saved': 'Settings saved',
-  'backup.title': 'Backup',
-  'backup.description': 'Create and manage local database backups.',
-  'backup.action.create': 'Create Backup',
+  'backup.title': 'Backup & export',
+  'backup.description': 'Download a complete copy of your company data.',
+  'backup.action.create': 'Download backup',
   'backup.table.file': 'File',
   'backup.table.size': 'Size',
   'backup.table.createdAt': 'Created',
-  'backup.empty.title': 'No backups yet',
-  'backup.empty.description': 'Create your first backup to protect your data.',
-};
+  'backup.empty.title': 'No exports yet',
+  'backup.empty.description': 'Backups you download will be listed here.',
+  'common.search': 'Search',
+  'common.all': 'All',
+  'common.confirm': 'Confirm',
+  'common.delete': 'Delete',
+  'common.today': 'Today',
+  'common.previousDay': 'Previous day',
+  'common.nextDay': 'Next day',
+  'common.noResults': 'No matches',
+  'common.noResultsDescription': 'Try a different search or filter.',
+  'common.viewAll': 'View all',
+  'common.openMenu': 'Open menu',
+  'common.closeMenu': 'Close menu',
+  'common.showPassword': 'Show password',
+  'common.hidePassword': 'Hide password',
+  'common.irreversible': 'This can\'t be undone.',
+  'session.expired': 'Your session has expired. Please sign in again.',
+  'error.network': 'Can\'t reach the server. Check your connection and try again.',
+  'error.notFound': 'That page doesn\'t exist, so we took you to the dashboard.',
+  'topbar.theme': 'Theme',
+  'topbar.theme.light': 'Light',
+  'topbar.theme.dark': 'Dark',
+  'topbar.theme.system': 'System',
+  'topbar.language': 'Language',
+  'topbar.toggleSidebar': 'Collapse sidebar',
+  'nav.group.workspace': 'Workspace',
+  'nav.group.admin': 'Administration',
+  'auth.brand.headline': 'Know who\'s in, every day.',
+  'auth.brand.body': 'Attendance, leave approvals and your staff directory in one place.',
+  'auth.brand.point1': 'Today\'s attendance at a glance',
+  'auth.brand.point2': 'Leave requests approved in one click',
+  'auth.brand.point3': 'Role-based access for every user',
+  'dashboard.greeting.morning': 'Good morning, {name}',
+  'dashboard.greeting.afternoon': 'Good afternoon, {name}',
+  'dashboard.greeting.evening': 'Good evening, {name}',
+  'dashboard.todayTitle': 'Today\'s attendance',
+  'dashboard.metric.present': 'In now',
+  'dashboard.metric.completed': 'Checked out',
+  'dashboard.metric.onLeave': 'On leave',
+  'dashboard.metric.notIn': 'Not in yet',
+  'dashboard.metric.summary': '{present} of {total} active employees have checked in',
+  'dashboard.pending.title': 'Waiting for approval',
+  'dashboard.pending.empty': 'No leave requests are waiting for you.',
+  'dashboard.recent.title': 'Latest check-ins',
+  'dashboard.recent.empty': 'No one has checked in yet today.',
+  'dashboard.holidays.title': 'Upcoming holidays',
+  'dashboard.departments.title': 'Headcount by department',
+  'dashboard.openAttendance': 'Record attendance',
+  'dashboard.limitedAccess': 'Your role doesn\'t include attendance or reports. Use the menu to reach the areas you manage.',
+  'attendance.filter.in': 'In now',
+  'attendance.filter.out': 'Checked out',
+  'attendance.filter.absent': 'Not in yet',
+  'attendance.searchPlaceholder': 'Search employees…',
+  'attendance.status.notIn': 'Not in',
+  'attendance.status.checkedOut': 'Checked out',
+  'attendance.pastDayNotice': 'You are viewing a past day. Check-in and check-out are only available for today.',
+  'attendance.checkedIn': '{name} checked in',
+  'attendance.checkedOut': '{name} checked out',
+  'attendance.table.hours': 'Hours',
+  'attendance.table.action': 'Action',
+  'attendance.pickDate': 'Choose date',
+  'attendance.noRecords': 'No attendance was recorded on this day.',
+  'employees.searchPlaceholder': 'Search by name, code or job title…',
+  'employees.filter.allDepartments': 'All departments',
+  'employees.confirmDeactivate.title': 'Deactivate {name}?',
+  'employees.confirmDeactivate.description': 'They will no longer appear in attendance or leave forms. You can reactivate them at any time.',
+  'departments.confirmDelete.title': 'Delete the {name} department?',
+  'departments.confirmDelete.description': 'Its employees will be left without a department. This can\'t be undone.',
+  'holidays.confirmDelete.title': 'Remove {name} from the calendar?',
+  'holidays.section.upcoming': 'Upcoming',
+  'holidays.section.past': 'Past',
+  'leaves.table.days': 'Days',
+  'leaves.confirmReject.title': 'Reject this leave request?',
+  'leaves.confirmReject.description': '{name}\'s request will be marked as rejected.',
+  'leaves.approvedToast': 'Leave approved',
+  'leaves.rejectedToast': 'Leave rejected',
+  'users.confirmDeactivate.title': 'Deactivate {name}?',
+  'users.confirmDeactivate.description': 'They won\'t be able to sign in until you reactivate the account.',
+  'backup.export.title': 'Export all data',
+  'backup.export.body': 'Creates a JSON file with employees, departments, attendance, leaves, holidays, users and roles. Passwords are never included.',
+  'backup.atlasNote': 'The database itself is also backed up automatically by MongoDB Atlas.',
+  'backup.history': 'Export history',
+  'backup.downloaded': 'Backup downloaded',
+  'settings.section.company': 'Company',
+  'settings.section.companyDescription': 'Your company name and standard working hours.',
+  'settings.section.appearance': 'Appearance',
+  'settings.section.appearanceDescription': 'Saved in this browser only.',
+  'settings.readOnly': 'You can view these settings but not change them.',
+} satisfies Record<string, string>;
+
+type TranslationKeys = { [K in keyof typeof en]: string };
+
 
 const ar: TranslationKeys = {
   'app.name': 'نظام الحضور',
-  'app.tagline': 'إدارة الحضور المحلية',
+  'app.tagline': 'إدارة حضور الموظفين',
   'nav.dashboard': 'لوحة التحكم',
   'nav.employees': 'الموظفون',
   'nav.attendance': 'الحضور',
@@ -415,27 +304,27 @@ const ar: TranslationKeys = {
   'nav.settings': 'الإعدادات',
   'nav.backup': 'النسخ الاحتياطي',
   'page.dashboard.title': 'لوحة التحكم',
-  'page.dashboard.description': 'نظرة عامة على نظام إدارة الحضور.',
+  'page.dashboard.description': 'من حضر اليوم وما يحتاج إلى انتباهك.',
   'page.comingSoon': 'قريباً',
   'page.comingSoonDescription': 'ستتوفر هذه الميزة في مرحلة لاحقة.',
-  'status.connected': 'قاعدة البيانات متصلة',
-  'status.disconnected': 'قاعدة البيانات غير متصلة',
-  'status.checking': 'جاري التحقق من الاتصال...',
+  'status.connected': 'متصل',
+  'status.disconnected': 'الخادم غير متاح',
+  'status.checking': 'جارٍ الاتصال…',
   'topbar.toggleTheme': 'تبديل المظهر',
   'topbar.toggleLanguage': 'تبديل اللغة',
   'empty.title': 'لا توجد بيانات',
-  'empty.description': 'سيظهر المحتوى هنا بمجرد تنفيذ هذه الميزة.',
+  'empty.description': 'ستظهر هنا العناصر التي تضيفها.',
   'error.title': 'حدث خطأ',
-  'error.description': 'حدث خطأ أثناء تحميل هذه الصفحة.',
+  'error.description': 'تعذّر تحميل هذه البيانات. تحقّق من اتصالك وحاول مرة أخرى.',
   'error.retry': 'حاول مرة أخرى',
   'common.cancel': 'إلغاء',
   'common.save': 'حفظ',
   'common.create': 'إنشاء',
   'common.loading': 'جارٍ التحميل...',
   'auth.setup.title': 'إنشاء حساب المسؤول',
-  'auth.setup.description': 'قم بإعداد أول حساب مسؤول للبدء في استخدام النظام.',
+  'auth.setup.description': 'يملك هذا الحساب صلاحيات كاملة. يمكنك إضافة مستخدمين آخرين بعد الدخول.',
   'auth.login.title': 'تسجيل الدخول',
-  'auth.login.description': 'أدخل بيانات الاعتماد للوصول إلى النظام.',
+  'auth.login.description': 'استخدم اسم المستخدم وكلمة المرور اللذين أعطاك إياهما المسؤول.',
   'auth.field.username': 'اسم المستخدم',
   'auth.field.email': 'البريد الإلكتروني (اختياري)',
   'auth.field.fullName': 'الاسم الكامل',
@@ -526,7 +415,7 @@ const ar: TranslationKeys = {
   'departments.empty.title': 'لا توجد أقسام بعد',
   'departments.empty.description': 'أضف قسماً للبدء بتنظيم الموظفين.',
   'attendance.title': 'الحضور',
-  'attendance.description': 'تتبع تسجيل حضور وانصراف الموظفين يومياً.',
+  'attendance.description': 'سجّل حضور الموظفين وانصرافهم لهذا اليوم.',
   'attendance.selectEmployee': 'اختر موظفاً',
   'attendance.action.checkIn': 'تسجيل حضور',
   'attendance.action.checkOut': 'تسجيل انصراف',
@@ -536,8 +425,8 @@ const ar: TranslationKeys = {
   'attendance.table.status': 'الحالة',
   'attendance.status.present': 'حاضر',
   'attendance.status.incomplete': 'حاضر (لم ينصرف)',
-  'attendance.empty.title': 'لا يوجد تسجيل حضور اليوم',
-  'attendance.empty.description': 'ستظهر سجلات حضور اليوم هنا.',
+  'attendance.empty.title': 'لا يوجد موظفون نشطون',
+  'attendance.empty.description': 'أضف الموظفين أولًا، ثم سجّل حضورهم هنا.',
   'leaves.title': 'الإجازات',
   'leaves.description': 'إدارة طلبات الإجازات وأنواعها.',
   'leaves.tab.requests': 'الطلبات',
@@ -593,20 +482,117 @@ const ar: TranslationKeys = {
   'settings.field.workStart': 'وقت بدء الدوام الافتراضي',
   'settings.field.workEnd': 'وقت انتهاء الدوام الافتراضي',
   'settings.saved': 'تم حفظ الإعدادات',
-  'backup.title': 'النسخ الاحتياطي',
-  'backup.description': 'إنشاء وإدارة النسخ الاحتياطية المحلية لقاعدة البيانات.',
-  'backup.action.create': 'إنشاء نسخة احتياطية',
+  'backup.title': 'النسخ الاحتياطي والتصدير',
+  'backup.description': 'نزّل نسخة كاملة من بيانات شركتك.',
+  'backup.action.create': 'تنزيل نسخة احتياطية',
   'backup.table.file': 'الملف',
   'backup.table.size': 'الحجم',
   'backup.table.createdAt': 'تاريخ الإنشاء',
-  'backup.empty.title': 'لا توجد نسخ احتياطية بعد',
-  'backup.empty.description': 'أنشئ أول نسخة احتياطية لحماية بياناتك.',
+  'backup.empty.title': 'لا توجد عمليات تصدير بعد',
+  'backup.empty.description': 'ستظهر هنا النسخ الاحتياطية التي تنزّلها.',
+  'common.search': 'بحث',
+  'common.all': 'الكل',
+  'common.confirm': 'تأكيد',
+  'common.delete': 'حذف',
+  'common.today': 'اليوم',
+  'common.previousDay': 'اليوم السابق',
+  'common.nextDay': 'اليوم التالي',
+  'common.noResults': 'لا توجد نتائج',
+  'common.noResultsDescription': 'جرّب بحثًا أو تصفية مختلفة.',
+  'common.viewAll': 'عرض الكل',
+  'common.openMenu': 'فتح القائمة',
+  'common.closeMenu': 'إغلاق القائمة',
+  'common.showPassword': 'إظهار كلمة المرور',
+  'common.hidePassword': 'إخفاء كلمة المرور',
+  'common.irreversible': 'لا يمكن التراجع عن هذا الإجراء.',
+  'session.expired': 'انتهت جلستك. يرجى تسجيل الدخول مرة أخرى.',
+  'error.network': 'تعذّر الوصول إلى الخادم. تحقّق من اتصالك وحاول مرة أخرى.',
+  'error.notFound': 'هذه الصفحة غير موجودة، لذلك نقلناك إلى لوحة التحكم.',
+  'topbar.theme': 'السمة',
+  'topbar.theme.light': 'فاتح',
+  'topbar.theme.dark': 'داكن',
+  'topbar.theme.system': 'حسب النظام',
+  'topbar.language': 'اللغة',
+  'topbar.toggleSidebar': 'طي الشريط الجانبي',
+  'nav.group.workspace': 'مساحة العمل',
+  'nav.group.admin': 'الإدارة',
+  'auth.brand.headline': 'اعرف من حضر، كل يوم.',
+  'auth.brand.body': 'الحضور واعتماد الإجازات ودليل الموظفين في مكان واحد.',
+  'auth.brand.point1': 'حضور اليوم في لمحة',
+  'auth.brand.point2': 'اعتماد طلبات الإجازة بنقرة واحدة',
+  'auth.brand.point3': 'صلاحيات حسب الدور لكل مستخدم',
+  'dashboard.greeting.morning': 'صباح الخير، {name}',
+  'dashboard.greeting.afternoon': 'مساء الخير، {name}',
+  'dashboard.greeting.evening': 'مساء الخير، {name}',
+  'dashboard.todayTitle': 'حضور اليوم',
+  'dashboard.metric.present': 'موجودون الآن',
+  'dashboard.metric.completed': 'سجّلوا الانصراف',
+  'dashboard.metric.onLeave': 'في إجازة',
+  'dashboard.metric.notIn': 'لم يحضروا بعد',
+  'dashboard.metric.summary': 'سجّل {present} من أصل {total} موظفًا نشطًا حضورهم',
+  'dashboard.pending.title': 'بانتظار الاعتماد',
+  'dashboard.pending.empty': 'لا توجد طلبات إجازة بانتظارك.',
+  'dashboard.recent.title': 'آخر تسجيلات الحضور',
+  'dashboard.recent.empty': 'لم يسجّل أحد حضوره اليوم بعد.',
+  'dashboard.holidays.title': 'العطل القادمة',
+  'dashboard.departments.title': 'عدد الموظفين حسب القسم',
+  'dashboard.openAttendance': 'تسجيل الحضور',
+  'dashboard.limitedAccess': 'لا يتضمن دورك الحضور أو التقارير. استخدم القائمة للوصول إلى الأقسام التي تديرها.',
+  'attendance.filter.in': 'موجودون',
+  'attendance.filter.out': 'انصرفوا',
+  'attendance.filter.absent': 'لم يحضروا',
+  'attendance.searchPlaceholder': 'ابحث عن موظف…',
+  'attendance.status.notIn': 'لم يحضر',
+  'attendance.status.checkedOut': 'انصرف',
+  'attendance.pastDayNotice': 'أنت تعرض يومًا سابقًا. تسجيل الحضور والانصراف متاح لليوم الحالي فقط.',
+  'attendance.checkedIn': 'تم تسجيل حضور {name}',
+  'attendance.checkedOut': 'تم تسجيل انصراف {name}',
+  'attendance.table.hours': 'الساعات',
+  'attendance.table.action': 'الإجراء',
+  'attendance.pickDate': 'اختر التاريخ',
+  'attendance.noRecords': 'لم يُسجَّل أي حضور في هذا اليوم.',
+  'employees.searchPlaceholder': 'ابحث بالاسم أو الرمز أو المسمى الوظيفي…',
+  'employees.filter.allDepartments': 'كل الأقسام',
+  'employees.confirmDeactivate.title': 'إلغاء تفعيل {name}؟',
+  'employees.confirmDeactivate.description': 'لن يظهر في نماذج الحضور أو الإجازات. يمكنك إعادة تفعيله في أي وقت.',
+  'departments.confirmDelete.title': 'حذف قسم {name}؟',
+  'departments.confirmDelete.description': 'سيبقى موظفوه بدون قسم. لا يمكن التراجع عن هذا الإجراء.',
+  'holidays.confirmDelete.title': 'إزالة {name} من التقويم؟',
+  'holidays.section.upcoming': 'القادمة',
+  'holidays.section.past': 'السابقة',
+  'leaves.table.days': 'الأيام',
+  'leaves.confirmReject.title': 'رفض طلب الإجازة هذا؟',
+  'leaves.confirmReject.description': 'سيتم وضع علامة الرفض على طلب {name}.',
+  'leaves.approvedToast': 'تم اعتماد الإجازة',
+  'leaves.rejectedToast': 'تم رفض الإجازة',
+  'users.confirmDeactivate.title': 'إلغاء تفعيل {name}؟',
+  'users.confirmDeactivate.description': 'لن يتمكن من تسجيل الدخول حتى تعيد تفعيل الحساب.',
+  'backup.export.title': 'تصدير جميع البيانات',
+  'backup.export.body': 'ينشئ ملف JSON يضم الموظفين والأقسام والحضور والإجازات والعطل والمستخدمين والأدوار. لا تُضمَّن كلمات المرور أبدًا.',
+  'backup.atlasNote': 'تُنسخ قاعدة البيانات نفسها احتياطيًا تلقائيًا أيضًا بواسطة MongoDB Atlas.',
+  'backup.history': 'سجل التصدير',
+  'backup.downloaded': 'تم تنزيل النسخة الاحتياطية',
+  'settings.section.company': 'الشركة',
+  'settings.section.companyDescription': 'اسم شركتك وساعات العمل المعتادة.',
+  'settings.section.appearance': 'المظهر',
+  'settings.section.appearanceDescription': 'تُحفظ في هذا المتصفح فقط.',
+  'settings.readOnly': 'يمكنك عرض هذه الإعدادات دون تعديلها.',
 };
 
 const translations: Record<Locale, TranslationKeys> = { en, ar };
 
-export function t(locale: Locale, key: keyof TranslationKeys): string {
-  return translations[locale][key];
+export type TranslationKey = keyof TranslationKeys;
+
+export function t(
+  locale: Locale,
+  key: TranslationKey,
+  vars?: Record<string, string | number>,
+): string {
+  const template = translations[locale][key] ?? translations.en[key];
+  if (!vars) return template;
+  return template.replace(/\{(\w+)\}/g, (match, name: string) =>
+    name in vars ? String(vars[name]) : match,
+  );
 }
 
 export type { TranslationKeys };

@@ -1,123 +1,86 @@
-import { Users, UserCheck, CalendarCheck, CalendarOff } from 'lucide-react';
 import { useAppStore } from '@/stores/app-store';
 import { t } from '@/lib/i18n';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { PageHeader } from '@/components/page-header';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ErrorState } from '@/components/ui/error-state';
+import { DepartmentBars, HolidayList, Panel } from '@/features/dashboard/components/overview-blocks';
 import { useReportsSummary } from '../hooks/use-reports';
 
 export function ReportsPage() {
   const locale = useAppStore((state) => state.locale);
   const summaryQuery = useReportsSummary();
+  const data = summaryQuery.data;
+
+  const stats = data
+    ? [
+        { label: t(locale, 'reports.card.totalEmployees'), value: data.totalEmployees },
+        { label: t(locale, 'reports.card.activeEmployees'), value: data.activeEmployees },
+        {
+          label: t(locale, 'reports.card.presentToday'),
+          value: data.presentToday,
+          hint: data.activeEmployees
+            ? `${Math.round((data.presentToday / data.activeEmployees) * 100)}%`
+            : undefined,
+        },
+        { label: t(locale, 'reports.card.onLeaveToday'), value: data.onLeaveToday },
+      ]
+    : [];
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight">{t(locale, 'reports.title')}</h2>
-        <p className="text-muted-foreground">{t(locale, 'reports.description')}</p>
-      </div>
+    <div>
+      <PageHeader title={t(locale, 'reports.title')} description={t(locale, 'reports.description')} />
 
       {summaryQuery.isLoading ? (
-        <Skeleton className="h-64 w-full" />
+        <div className="space-y-6">
+          <Skeleton className="h-28 w-full rounded-lg" />
+          <div className="grid gap-6 lg:grid-cols-2">
+            <Skeleton className="h-64 rounded-lg" />
+            <Skeleton className="h-64 rounded-lg" />
+          </div>
+        </div>
       ) : summaryQuery.isError ? (
         <ErrorState
           title={t(locale, 'error.title')}
-          description={t(locale, 'error.description')}
+          description={(summaryQuery.error as Error).message}
           onRetry={() => summaryQuery.refetch()}
           retryLabel={t(locale, 'error.retry')}
         />
-      ) : summaryQuery.data ? (
-        <>
-          <div className="grid gap-4 md:grid-cols-4">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  {t(locale, 'reports.card.totalEmployees')}
-                </CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent className="text-2xl font-bold">{summaryQuery.data.totalEmployees}</CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  {t(locale, 'reports.card.activeEmployees')}
-                </CardTitle>
-                <UserCheck className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent className="text-2xl font-bold">{summaryQuery.data.activeEmployees}</CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  {t(locale, 'reports.card.presentToday')}
-                </CardTitle>
-                <CalendarCheck className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent className="text-2xl font-bold">{summaryQuery.data.presentToday}</CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  {t(locale, 'reports.card.onLeaveToday')}
-                </CardTitle>
-                <CalendarOff className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent className="text-2xl font-bold">{summaryQuery.data.onLeaveToday}</CardContent>
-            </Card>
-          </div>
+      ) : data ? (
+        <div className="space-y-6">
+          <dl className="grid grid-cols-2 divide-border overflow-hidden rounded-lg border bg-card shadow-soft lg:grid-cols-4 lg:divide-x lg:rtl:divide-x-reverse">
+            {stats.map((stat, index) => (
+              <div
+                key={stat.label}
+                className={
+                  'p-5 ' +
+                  (index % 2 === 0 ? 'border-e lg:border-e-0 ' : '') +
+                  (index < 2 ? 'border-b lg:border-b-0' : '')
+                }
+              >
+                <dt className="text-sm text-muted-foreground">{stat.label}</dt>
+                <dd className="mt-1.5 flex items-baseline gap-2">
+                  <span className="tabular text-3xl font-semibold tracking-tight">{stat.value}</span>
+                  {stat.hint && <span className="tabular text-sm text-muted-foreground">{stat.hint}</span>}
+                </dd>
+              </div>
+            ))}
+          </dl>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">{t(locale, 'reports.byDepartment')}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableBody>
-                    {summaryQuery.data.employeesByDepartment.map((row) => (
-                      <TableRow key={row.department}>
-                        <TableCell>{row.department}</TableCell>
-                        <TableCell className="text-end">{row.count}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">{t(locale, 'reports.upcomingHolidays')}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {summaryQuery.data.upcomingHolidays.length > 0 ? (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>{t(locale, 'holidays.table.name')}</TableHead>
-                        <TableHead>{t(locale, 'holidays.table.date')}</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {summaryQuery.data.upcomingHolidays.map((holiday) => (
-                        <TableRow key={holiday.id}>
-                          <TableCell>{holiday.name}</TableCell>
-                          <TableCell>{new Date(holiday.date).toLocaleDateString(locale)}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                ) : (
-                  <p className="text-sm text-muted-foreground">
-                    {t(locale, 'reports.noUpcomingHolidays')}
-                  </p>
-                )}
-              </CardContent>
-            </Card>
+          <div className="grid gap-6 lg:grid-cols-2">
+            <Panel title={t(locale, 'reports.byDepartment')}>
+              {data.employeesByDepartment.length > 0 ? (
+                <DepartmentBars rows={data.employeesByDepartment} />
+              ) : (
+                <p className="py-6 text-center text-sm text-muted-foreground">
+                  {t(locale, 'departments.empty.title')}
+                </p>
+              )}
+            </Panel>
+            <Panel title={t(locale, 'reports.upcomingHolidays')}>
+              <HolidayList locale={locale} holidays={data.upcomingHolidays} />
+            </Panel>
           </div>
-        </>
+        </div>
       ) : null}
     </div>
   );

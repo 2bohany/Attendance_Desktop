@@ -1,4 +1,4 @@
-import type { BackupFile } from '@attendance/shared';
+import type { BackupExport, BackupFile } from '@attendance/shared';
 import { apiRequest } from '@/services/api-client';
 
 function unwrap<T>(response: { success: boolean; data?: T; error?: string }): T {
@@ -13,7 +13,7 @@ export async function listBackups(): Promise<BackupFile[]> {
   return unwrap(response);
 }
 
-export async function createBackup(): Promise<BackupFile> {
-  const response = await apiRequest<BackupFile>({ method: 'POST', path: '/backup' });
+export async function createBackup(): Promise<BackupExport> {
+  const response = await apiRequest<BackupExport>({ method: 'POST', path: '/backup' });
   return unwrap(response);
 }

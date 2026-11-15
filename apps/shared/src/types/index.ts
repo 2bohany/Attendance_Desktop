@@ -168,3 +168,12 @@ export type BackupFile = {
   sizeBytes: number;
   createdAt: string;
 };
+
+export type BackupExport = {
+  format: 'attendance-backup';
+  version: number;
+  exportedAt: string;
+  fileName: string;
+  sizeBytes: number;
+  data: Record<string, unknown[]>;
+};

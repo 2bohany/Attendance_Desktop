@@ -71,13 +71,13 @@ export function CreateRoleDialog({ permissions, trigger }: CreateRoleDialogProps
 
           <div className="space-y-2">
             <Label>{t(locale, 'roles.field.permissions')}</Label>
-            <div className="grid max-h-48 grid-cols-2 gap-2 overflow-y-auto rounded-md border p-3">
+            <div className="grid max-h-56 gap-2 sm:grid-cols-2 overflow-y-auto rounded-md border p-3">
               {permissions.map((permission) => (
                 <label key={permission.id} className="flex items-center gap-2 text-sm">
                   <input
                     type="checkbox"
                     value={permission.key}
-                    className="h-4 w-4 rounded border-input"
+                    className="h-4 w-4 rounded border-input accent-primary"
                     {...register('permissionKeys')}
                   />
                   {permission.key}

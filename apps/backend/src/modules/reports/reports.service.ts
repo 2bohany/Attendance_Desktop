@@ -1,19 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import type { ReportsSummary } from '@attendance/shared';
 import { ReportsRepository } from './reports.repository';
+import { businessDay } from '../../common/utils/business-day';
 
 const UPCOMING_HOLIDAYS_LIMIT = 5;
 
-function today(): Date {
-  return new Date(`${new Date().toISOString().slice(0, 10)}T00:00:00.000Z`);
-}
 
 @Injectable()
 export class ReportsService {
   constructor(private readonly reportsRepository: ReportsRepository) {}
 
   async getSummary(): Promise<ReportsSummary> {
-    const date = today();
+    const date = businessDay();
 
     const [
       totalEmployees,

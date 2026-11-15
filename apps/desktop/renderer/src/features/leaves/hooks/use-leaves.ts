@@ -5,8 +5,8 @@ import { createLeave, createLeaveType, listLeaveTypes, listLeaves, updateLeaveSt
 const LEAVES_QUERY_KEY = ['leaves'];
 const LEAVE_TYPES_QUERY_KEY = ['leave-types'];
 
-export function useLeaves() {
-  return useQuery({ queryKey: LEAVES_QUERY_KEY, queryFn: listLeaves });
+export function useLeaves(enabled = true) {
+  return useQuery({ queryKey: LEAVES_QUERY_KEY, queryFn: listLeaves, enabled });
 }
 
 export function useLeaveTypes() {
@@ -29,6 +29,7 @@ export function useUpdateLeaveStatus() {
     mutationFn: ({ id, status }: { id: string; status: LeaveStatus }) => updateLeaveStatus(id, status),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: LEAVES_QUERY_KEY });
+      void queryClient.invalidateQueries({ queryKey: ['reports'] });
     },
   });
 }

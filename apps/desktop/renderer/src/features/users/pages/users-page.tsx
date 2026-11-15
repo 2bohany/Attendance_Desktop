@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { toast } from 'sonner';
 import { useAppStore } from '@/stores/app-store';
 import { useAuthStore } from '@/stores/auth-store';
@@ -6,7 +7,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
+import { TableSkeleton } from '@/components/table-skeleton';
+import { PageHeader } from '@/components/page-header';
+import { EmployeeAvatar } from '@/components/employee-avatar';
+import { useConfirm } from '@/components/confirm-dialog';
+import { formatDateTime } from '@/lib/format';
 import { EmptyState } from '@/components/ui/empty-state';
 import { ErrorState } from '@/components/ui/error-state';
 import { Plus } from 'lucide-react';
@@ -28,39 +33,54 @@ export function UsersPage() {
   const permissionsQuery = usePermissions();
   const setUserActive = useSetUserActive();
 
+  const [tab, setTab] = useState('users');
+  const { confirm, dialog } = useConfirm();
   const roles = rolesQuery.data ?? [];
   const permissions = permissionsQuery.data ?? [];
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight">{t(locale, 'users.title')}</h2>
-        <p className="text-muted-foreground">{t(locale, 'users.description')}</p>
-      </div>
+      <PageHeader
+        className="mb-0"
+        title={t(locale, 'users.title')}
+        description={t(locale, 'users.description')}
+        actions={
+          tab === 'users'
+            ? canCreateUsers && (
+                <UserFormDialog
+                  roles={roles}
+                  trigger={
+                    <Button>
+                      <Plus />
+                      {t(locale, 'users.action.createUser')}
+                    </Button>
+                  }
+                />
+              )
+            : canCreateRoles && (
+                <CreateRoleDialog
+                  permissions={permissions}
+                  trigger={
+                    <Button>
+                      <Plus />
+                      {t(locale, 'roles.action.createRole')}
+                    </Button>
+                  }
+                />
+              )
+        }
+      />
 
-      <Tabs defaultValue="users">
+      <Tabs value={tab} onValueChange={setTab}>
         <TabsList>
           <TabsTrigger value="users">{t(locale, 'users.tab.users')}</TabsTrigger>
           <TabsTrigger value="roles">{t(locale, 'users.tab.roles')}</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="users" className="space-y-4">
-          <div className="flex justify-end">
-            {canCreateUsers && (
-              <UserFormDialog
-                roles={roles}
-                trigger={
-                  <Button size="sm">
-                    <Plus className="me-2 h-4 w-4" />
-                    {t(locale, 'users.action.createUser')}
-                  </Button>
-                }
-              />
-            )}
-          </div>
+        <TabsContent value="users">
 
           {usersQuery.isLoading ? (
-            <Skeleton className="h-64 w-full" />
+            <TableSkeleton />
           ) : usersQuery.isError ? (
             <ErrorState
               title={t(locale, 'error.title')}
@@ -69,15 +89,15 @@ export function UsersPage() {
               retryLabel={t(locale, 'error.retry')}
             />
           ) : usersQuery.data && usersQuery.data.length > 0 ? (
+            <div className="overflow-hidden rounded-lg border bg-card shadow-soft">
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>{t(locale, 'users.table.fullName')}</TableHead>
-                  <TableHead>{t(locale, 'users.table.username')}</TableHead>
-                  <TableHead>{t(locale, 'users.table.email')}</TableHead>
-                  <TableHead>{t(locale, 'users.table.role')}</TableHead>
+                  <TableHead className="hidden lg:table-cell">{t(locale, 'users.table.email')}</TableHead>
+                  <TableHead className="hidden sm:table-cell">{t(locale, 'users.table.role')}</TableHead>
                   <TableHead>{t(locale, 'users.table.status')}</TableHead>
-                  <TableHead>{t(locale, 'users.table.lastLogin')}</TableHead>
+                  <TableHead className="hidden md:table-cell">{t(locale, 'users.table.lastLogin')}</TableHead>
                   {canEditUsers && (
                     <TableHead className="text-end">{t(locale, 'users.table.actions')}</TableHead>
                   )}
@@ -86,24 +106,33 @@ export function UsersPage() {
               <TableBody>
                 {usersQuery.data.map((user) => (
                   <TableRow key={user.id}>
-                    <TableCell className="font-medium">{user.fullName}</TableCell>
-                    <TableCell>{user.username}</TableCell>
-                    <TableCell>{user.email ?? '—'}</TableCell>
-                    <TableCell>{user.role.name}</TableCell>
                     <TableCell>
-                      <Badge variant={user.isActive ? 'success' : 'destructive'}>
+                      <div className="flex items-center gap-3">
+                        <EmployeeAvatar name={user.fullName} />
+                        <div className="min-w-0">
+                          <p className="truncate font-medium">{user.fullName}</p>
+                          <p className="truncate text-xs text-muted-foreground">@{user.username}</p>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="hidden text-muted-foreground lg:table-cell">{user.email ?? '—'}</TableCell>
+                    <TableCell className="hidden sm:table-cell">
+                      <Badge variant="outline">{user.role.name}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={user.isActive ? 'success' : 'secondary'} dot>
                         {user.isActive
                           ? t(locale, 'users.status.active')
                           : t(locale, 'users.status.inactive')}
                       </Badge>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="tabular hidden text-muted-foreground md:table-cell">
                       {user.lastLoginAt
-                        ? new Date(user.lastLoginAt).toLocaleString(locale)
+                        ? formatDateTime(locale, user.lastLoginAt)
                         : t(locale, 'users.neverLoggedIn')}
                     </TableCell>
                     {canEditUsers && (
-                      <TableCell className="text-end space-x-2 rtl:space-x-reverse">
+                      <TableCell className="whitespace-nowrap text-end">
                         <UserFormDialog
                           roles={roles}
                           user={user}
@@ -117,12 +146,21 @@ export function UsersPage() {
                           variant="ghost"
                           size="sm"
                           disabled={setUserActive.isPending}
-                          onClick={() =>
-                            setUserActive.mutate(
-                              { id: user.id, isActive: !user.isActive },
-                              { onError: (error) => toast.error((error as Error).message) },
-                            )
-                          }
+                          onClick={() => {
+                            const run = () =>
+                              setUserActive.mutate(
+                                { id: user.id, isActive: !user.isActive },
+                                { onError: (error) => toast.error((error as Error).message) },
+                              );
+                            if (!user.isActive) return run();
+                            confirm({
+                              title: t(locale, 'users.confirmDeactivate.title', { name: user.fullName }),
+                              description: t(locale, 'users.confirmDeactivate.description'),
+                              confirmLabel: t(locale, 'users.action.deactivate'),
+                              variant: 'destructive',
+                              onConfirm: run,
+                            });
+                          }}
                         >
                           {user.isActive
                             ? t(locale, 'users.action.deactivate')
@@ -134,28 +172,16 @@ export function UsersPage() {
                 ))}
               </TableBody>
             </Table>
+            </div>
           ) : (
             <EmptyState title={t(locale, 'empty.title')} description={t(locale, 'empty.description')} />
           )}
         </TabsContent>
 
-        <TabsContent value="roles" className="space-y-4">
-          <div className="flex justify-end">
-            {canCreateRoles && (
-              <CreateRoleDialog
-                permissions={permissions}
-                trigger={
-                  <Button size="sm">
-                    <Plus className="me-2 h-4 w-4" />
-                    {t(locale, 'roles.action.createRole')}
-                  </Button>
-                }
-              />
-            )}
-          </div>
+        <TabsContent value="roles">
 
           {rolesQuery.isLoading || permissionsQuery.isLoading ? (
-            <Skeleton className="h-64 w-full" />
+            <TableSkeleton />
           ) : rolesQuery.isError ? (
             <ErrorState
               title={t(locale, 'error.title')}
@@ -177,6 +203,7 @@ export function UsersPage() {
           )}
         </TabsContent>
       </Tabs>
+      {dialog}
     </div>
   );
 }

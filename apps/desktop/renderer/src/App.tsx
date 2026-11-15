@@ -1,77 +1,154 @@
-import { useState } from 'react';
+import { lazy, Suspense, useEffect, useRef } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { NAV_ITEMS, type NavItemId } from '@attendance/shared';
 import { AppShell } from '@/layouts/app-shell';
 import { DashboardPage } from '@/features/dashboard';
-import { UsersPage } from '@/features/users';
-import { EmployeesPage } from '@/features/employees';
-import { AttendancePage } from '@/features/attendance';
-import { LeavesPage } from '@/features/leaves';
-import { HolidaysPage } from '@/features/holidays';
-import { ReportsPage } from '@/features/reports';
-import { SettingsPage } from '@/features/settings';
-import { BackupPage } from '@/features/backup';
 import { LoginPage, SetupPage, useSetupStatus } from '@/features/auth';
 import { useAuthStore } from '@/stores/auth-store';
 import { useAppStore } from '@/stores/app-store';
-import { t } from '@/lib/i18n';
-import type { TranslationKeys } from '@/lib/i18n';
+import { UNAUTHORIZED_EVENT } from '@/services/api-client';
+import { navigate, pageFromPath, usePath } from '@/lib/router';
+import { isNavItemVisible } from '@/lib/permissions';
+import { t, type TranslationKey } from '@/lib/i18n';
+import { BrandMark } from '@/components/brand-mark';
 
-const pageMap: Record<
-  NavItemId,
-  { component: React.ComponentType; titleKey?: keyof TranslationKeys }
-> = {
-  dashboard: { component: DashboardPage },
-  employees: { component: EmployeesPage },
-  attendance: { component: AttendancePage },
-  users: { component: UsersPage },
-  leaves: { component: LeavesPage },
-  holidays: { component: HolidaysPage },
-  reports: { component: ReportsPage },
-  settings: { component: SettingsPage },
-  backup: { component: BackupPage },
+// The dashboard ships in the main bundle; every other page loads on first visit.
+const pageMap: Record<NavItemId, React.ComponentType> = {
+  dashboard: DashboardPage,
+  employees: lazy(() => import('@/features/employees').then((m) => ({ default: m.EmployeesPage }))),
+  attendance: lazy(() => import('@/features/attendance').then((m) => ({ default: m.AttendancePage }))),
+  users: lazy(() => import('@/features/users').then((m) => ({ default: m.UsersPage }))),
+  leaves: lazy(() => import('@/features/leaves').then((m) => ({ default: m.LeavesPage }))),
+  holidays: lazy(() => import('@/features/holidays').then((m) => ({ default: m.HolidaysPage }))),
+  reports: lazy(() => import('@/features/reports').then((m) => ({ default: m.ReportsPage }))),
+  settings: lazy(() => import('@/features/settings').then((m) => ({ default: m.SettingsPage }))),
+  backup: lazy(() => import('@/features/backup').then((m) => ({ default: m.BackupPage }))),
 };
 
-function isNavItemVisible(id: NavItemId, hasPermission: (key: string) => boolean): boolean {
-  const item = NAV_ITEMS.find((navItem) => navItem.id === id);
-  if (!item?.permission) return true;
-  const required = Array.isArray(item.permission) ? item.permission : [item.permission];
-  return required.some((key) => hasPermission(key));
+function PageFallback() {
+  return (
+    <div className="space-y-6" aria-busy="true">
+      <div className="space-y-2">
+        <div className="h-7 w-48 animate-pulse rounded-md bg-muted" />
+        <div className="h-4 w-72 max-w-full animate-pulse rounded-md bg-muted" />
+      </div>
+      <div className="h-64 animate-pulse rounded-lg bg-muted/70" />
+    </div>
+  );
 }
 
 function FullScreenLoader() {
   const locale = useAppStore((state) => state.locale);
   return (
-    <div className="flex h-screen items-center justify-center bg-background">
+    <div
+      className="flex h-dvh flex-col items-center justify-center gap-4 bg-background"
+      role="status"
+      aria-live="polite"
+    >
+      <BrandMark className="h-10 w-10 animate-pulse" />
       <p className="text-sm text-muted-foreground">{t(locale, 'common.loading')}</p>
     </div>
   );
 }
 
-export function App() {
-  const [activePage, setActivePage] = useState<NavItemId>('dashboard');
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+/** `undefined` leaves the title to another component (parent effects run after children's). */
+function useDocumentTitle(titleKey: TranslationKey | null | undefined) {
+  const locale = useAppStore((state) => state.locale);
+  useEffect(() => {
+    if (titleKey === undefined) return;
+    const appName = t(locale, 'app.name');
+    const pageTitle = titleKey ? t(locale, titleKey) : appName;
+    document.title = pageTitle === appName ? appName : `${pageTitle} · ${appName}`;
+  }, [locale, titleKey]);
+}
+
+function AuthenticatedApp() {
+  const path = usePath();
+  const locale = useAppStore((state) => state.locale);
   const hasPermission = useAuthStore((state) => state.hasPermission);
-  const { data: setupStatus } = useSetupStatus();
+  const user = useAuthStore((state) => state.user);
 
-  if (isAuthenticated) {
-    const effectivePage = isNavItemVisible(activePage, hasPermission) ? activePage : 'dashboard';
-    const PageComponent = pageMap[effectivePage].component;
-    return (
-      <AppShell activePage={effectivePage} onNavigate={setActivePage}>
-        <PageComponent />
-      </AppShell>
-    );
-  }
+  const requested = pageFromPath(path);
+  const allowed = requested && isNavItemVisible(requested, hasPermission) ? requested : null;
+  const activePage: NavItemId = allowed ?? 'dashboard';
 
-  if (!setupStatus) {
-    // Covers both the initial fetch and a transient error awaiting the next poll
-    // (see useSetupStatus) - never guess Login before we actually know the answer.
+  useEffect(() => {
+    if (allowed) return;
+    if (requested === null) toast.info(t(locale, 'error.notFound'));
+    navigate('dashboard', { replace: true });
+    // Only react to URL / permission changes, not to locale switches.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allowed, requested, user]);
+
+  const navItem = NAV_ITEMS.find((item) => item.id === activePage);
+  useDocumentTitle((navItem?.labelKey as TranslationKey | undefined) ?? null);
+
+  const PageComponent = pageMap[activePage];
+  return (
+    <AppShell activePage={activePage}>
+      <Suspense fallback={<PageFallback />}>
+        <PageComponent key={activePage} />
+      </Suspense>
+    </AppShell>
+  );
+}
+
+export function App() {
+  const status = useAuthStore((state) => state.status);
+  const restoreSession = useAuthStore((state) => state.restoreSession);
+  const clearSession = useAuthStore((state) => state.clearSession);
+  const initialize = useAppStore((state) => state.initialize);
+  const queryClient = useQueryClient();
+  const { data: setupStatus } = useSetupStatus(status === 'anonymous');
+  const previousStatus = useRef(status);
+
+  useEffect(() => initialize(), [initialize]);
+
+  useEffect(() => {
+    void restoreSession();
+  }, [restoreSession]);
+
+  useEffect(() => {
+    const onUnauthorized = () => {
+      if (useAuthStore.getState().status !== 'authenticated') return;
+      void clearSession();
+      toast.error(t(useAppStore.getState().locale, 'session.expired'), { id: 'session-expired' });
+    };
+    window.addEventListener(UNAUTHORIZED_EVENT, onUnauthorized);
+    return () => window.removeEventListener(UNAUTHORIZED_EVENT, onUnauthorized);
+  }, [clearSession]);
+
+  // Never leak one user's cached data to the next person who signs in.
+  useEffect(() => {
+    if (previousStatus.current === 'authenticated' && status === 'anonymous') {
+      queryClient.clear();
+    }
+    previousStatus.current = status;
+  }, [status, queryClient]);
+
+  useDocumentTitle(
+    status === 'anonymous'
+      ? setupStatus?.needsSetup
+        ? 'auth.setup.title'
+        : 'auth.login.title'
+      : status === 'restoring'
+        ? null
+        : undefined,
+  );
+
+  if (status === 'restoring') {
     return <FullScreenLoader />;
   }
 
-  if (setupStatus.needsSetup) {
-    return <SetupPage />;
+  if (status === 'authenticated') {
+    return <AuthenticatedApp />;
   }
 
-  return <LoginPage />;
+  if (!setupStatus) {
+    // Covers the initial fetch and a transient error awaiting the next poll.
+    return <FullScreenLoader />;
+  }
+
+  return setupStatus.needsSetup ? <SetupPage /> : <LoginPage />;
 }
