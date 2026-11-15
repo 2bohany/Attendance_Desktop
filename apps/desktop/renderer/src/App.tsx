@@ -158,10 +158,7 @@ export function App() {
     return <LandingPage needsSetup={setupStatus?.needsSetup} />;
   }
 
-  if (!setupStatus) {
-    // Covers the initial fetch and a transient error awaiting the next poll.
-    return <FullScreenLoader />;
-  }
-
-  return setupStatus.needsSetup ? <SetupPage /> : <LoginPage />;
+  // Never block on the setup check: show sign-in right away and switch to
+  // first-run setup only once the server confirms no admin exists yet.
+  return setupStatus?.needsSetup ? <SetupPage /> : <LoginPage />;
 }

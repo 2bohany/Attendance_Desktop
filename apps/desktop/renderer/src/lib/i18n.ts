@@ -327,6 +327,20 @@ const en = {
   'landing.preview.label': 'Preview of the attendance dashboard',
   'auth.backHome': 'Back to home',
   'auth.capsLock': 'Caps Lock is on',
+  'landing.features.title': 'Built for the way HR teams actually work',
+  'landing.features.body': 'Everything you need to run attendance day to day, and nothing you do not.',
+  'landing.bento.bilingual.title': 'Arabic and English, done properly',
+  'landing.bento.bilingual.body': 'Switch at any time. Arabic gets a true right-to-left layout, not a mirror.',
+  'landing.bento.theme.title': 'Light or dark',
+  'landing.bento.theme.body': 'Follows your system, or pick one and it is remembered.',
+  'landing.bento.export.title': 'Your data, always exportable',
+  'landing.bento.export.body': 'Download everything as a single JSON file whenever you like.',
+  'landing.fact.languages': 'English and Arabic',
+  'landing.fact.devices': 'Desktop, tablet and phone',
+  'landing.fact.roles': 'Granular role permissions',
+  'landing.fact.audit': 'Audit log on every change',
+  'landing.float.approved': 'Leave approved',
+  'landing.float.checkedIn': 'Checked in',
 } satisfies Record<string, string>;
 
 type TranslationKeys = { [K in keyof typeof en]: string };
@@ -659,6 +673,20 @@ const ar: TranslationKeys = {
   'landing.preview.label': 'معاينة للوحة الحضور',
   'auth.backHome': 'العودة إلى الرئيسية',
   'auth.capsLock': 'مفتاح Caps Lock مفعّل',
+  'landing.features.title': 'مصمّم لطريقة عمل فرق الموارد البشرية فعليًا',
+  'landing.features.body': 'كل ما تحتاجه لإدارة الحضور يومًا بيوم، ولا شيء زائد.',
+  'landing.bento.bilingual.title': 'العربية والإنجليزية كما ينبغي',
+  'landing.bento.bilingual.body': 'بدّل اللغة في أي وقت. تحصل العربية على تخطيط حقيقي من اليمين إلى اليسار.',
+  'landing.bento.theme.title': 'فاتح أو داكن',
+  'landing.bento.theme.body': 'يتبع إعدادات نظامك، أو اختر سمة وسيتذكرها التطبيق.',
+  'landing.bento.export.title': 'بياناتك قابلة للتصدير دائمًا',
+  'landing.bento.export.body': 'نزّل كل شيء في ملف JSON واحد متى شئت.',
+  'landing.fact.languages': 'العربية والإنجليزية',
+  'landing.fact.devices': 'الكمبيوتر والجهاز اللوحي والهاتف',
+  'landing.fact.roles': 'صلاحيات دقيقة حسب الدور',
+  'landing.fact.audit': 'سجل تدقيق لكل تغيير',
+  'landing.float.approved': 'تم اعتماد الإجازة',
+  'landing.float.checkedIn': 'تم تسجيل الحضور',
 };
 
 const translations: Record<Locale, TranslationKeys> = { en, ar };

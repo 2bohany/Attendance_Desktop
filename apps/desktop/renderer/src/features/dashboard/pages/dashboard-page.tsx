@@ -3,7 +3,13 @@ import { ArrowRight, Check, X, LayoutGrid } from 'lucide-react';
 import { useAppStore } from '@/stores/app-store';
 import { useAuthStore } from '@/stores/auth-store';
 import { t } from '@/lib/i18n';
-import { formatDay, formatDayCount, formatLongToday, formatTime, inclusiveDays } from '@/lib/format';
+import {
+  formatDay,
+  formatDayCount,
+  formatLongToday,
+  formatTime,
+  inclusiveDays,
+} from '@/lib/format';
 import { hrefForPage, navigate } from '@/lib/router';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -13,7 +19,13 @@ import { useReportsSummary } from '@/features/reports/hooks/use-reports';
 import { useTodayAttendance } from '@/features/attendance/hooks/use-attendance';
 import { useLeaves, useUpdateLeaveStatus } from '@/features/leaves/hooks/use-leaves';
 import { useEmployees } from '@/features/employees/hooks/use-employees';
-import { DepartmentBars, HolidayList, Panel, TodayBar, type TodayBreakdown } from '../components/overview-blocks';
+import {
+  DepartmentBars,
+  HolidayList,
+  Panel,
+  TodayBar,
+  type TodayBreakdown,
+} from '../components/overview-blocks';
 
 function greetingKey(hour: number) {
   if (hour < 12) return 'dashboard.greeting.morning' as const;
@@ -52,7 +64,7 @@ export function DashboardPage() {
   const reports = useReportsSummary(canReports);
   const attendance = useTodayAttendance(canAttendance);
   const leaves = useLeaves(canLeaves);
-  const employees = useEmployees(canEmployees && !canReports);
+  const employees = useEmployees(canEmployees && (!canReports || reports.isError));
   const updateStatus = useUpdateLeaveStatus();
   const { confirm, dialog } = useConfirm();
 
@@ -60,7 +72,12 @@ export function DashboardPage() {
   const records = attendance.data ?? [];
   const activeTotal =
     reports.data?.activeEmployees ??
-    (employees.data ? employees.data.filter((employee) => employee.isActive).length : null);
+    (employees.data
+      ? employees.data.filter((employee) => employee.isActive).length
+      : // Last resort so the panel never waits forever on a failed request.
+        (reports.isError || !canReports) && !employees.isFetching && attendance.data
+        ? records.length
+        : null);
 
   const today: TodayBreakdown | null =
     canAttendance && activeTotal !== null && attendance.data
@@ -84,7 +101,9 @@ export function DashboardPage() {
       { id, status },
       {
         onSuccess: () =>
-          toast.success(t(locale, status === 'APPROVED' ? 'leaves.approvedToast' : 'leaves.rejectedToast')),
+          toast.success(
+            t(locale, status === 'APPROVED' ? 'leaves.approvedToast' : 'leaves.rejectedToast'),
+          ),
         onError: (error) => toast.error((error as Error).message),
       },
     );
@@ -172,8 +191,10 @@ export function DashboardPage() {
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-medium">{leave.employee.fullName}</p>
                           <p className="tabular truncate text-xs text-muted-foreground">
-                            {leave.leaveType.name} · {formatDay(locale, leave.startDate, { day: 'numeric', month: 'short' })}
-                            {days > 1 && ` – ${formatDay(locale, leave.endDate, { day: 'numeric', month: 'short' })}`}
+                            {leave.leaveType.name} ·{' '}
+                            {formatDay(locale, leave.startDate, { day: 'numeric', month: 'short' })}
+                            {days > 1 &&
+                              ` – ${formatDay(locale, leave.endDate, { day: 'numeric', month: 'short' })}`}
                             {' · '}
                             {formatDayCount(locale, days)}
                           </p>
@@ -197,9 +218,15 @@ export function DashboardPage() {
                               }
                             >
                               <X />
-                              <span className="sr-only sm:not-sr-only">{t(locale, 'leaves.action.reject')}</span>
+                              <span className="sr-only sm:not-sr-only">
+                                {t(locale, 'leaves.action.reject')}
+                              </span>
                             </Button>
-                            <Button size="sm" disabled={updateStatus.isPending} onClick={() => decide(leave.id, 'APPROVED')}>
+                            <Button
+                              size="sm"
+                              disabled={updateStatus.isPending}
+                              onClick={() => decide(leave.id, 'APPROVED')}
+                            >
                               <Check />
                               {t(locale, 'leaves.action.approve')}
                             </Button>
@@ -229,7 +256,10 @@ export function DashboardPage() {
                 <ul className="-my-2.5 divide-y">
                   {latest.map((record) => (
                     <li key={record.id} className="flex items-center gap-3 py-2.5">
-                      <EmployeeAvatar name={record.employee.fullName} className="h-7 w-7 text-[11px]" />
+                      <EmployeeAvatar
+                        name={record.employee.fullName}
+                        className="h-7 w-7 text-[11px]"
+                      />
                       <p className="min-w-0 flex-1 truncate text-sm">{record.employee.fullName}</p>
                       <span className="tabular text-sm text-muted-foreground">
                         {formatTime(locale, record.checkIn!)}
