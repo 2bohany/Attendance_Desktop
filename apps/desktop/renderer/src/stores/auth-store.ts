@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { AuthUser } from '@attendance/shared';
 import { apiRequest } from '@/services/api-client';
+import { hasStoredSession } from '@/services/browser-electron-api';
 
 /**
  * `restoring`: checking whether a stored token is still valid (page refresh).
@@ -35,6 +36,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   restoreSession: async () => {
+    if (hasStoredSession() === false) {
+      set({ user: null, status: 'anonymous', isAuthenticated: false });
+      return;
+    }
     const response = await apiRequest<AuthUser>({ method: 'GET', path: '/auth/me' });
     if (response.success && response.data) {
       set({ user: response.data, status: 'authenticated', isAuthenticated: true });

@@ -21,9 +21,18 @@ export function LoginPage() {
   } = useForm<LoginInput>({ resolver: zodResolver(loginSchema) });
 
   return (
-    <AuthLayout title={t(locale, 'auth.login.title')} description={t(locale, 'auth.login.description')}>
-      <form onSubmit={handleSubmit((values) => loginMutation.mutate(values))} className="space-y-5" noValidate>
-        <FormError message={loginMutation.isError ? (loginMutation.error as Error).message : undefined} />
+    <AuthLayout
+      title={t(locale, 'auth.login.title')}
+      description={t(locale, 'auth.login.description')}
+    >
+      <form
+        onSubmit={handleSubmit((values) => loginMutation.mutate(values))}
+        className="space-y-5"
+        noValidate
+      >
+        <FormError
+          message={loginMutation.isError ? (loginMutation.error as Error).message : undefined}
+        />
 
         <div className="space-y-2">
           <Label htmlFor="username">{t(locale, 'auth.field.username')}</Label>

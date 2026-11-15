@@ -21,9 +21,20 @@ export function SetupPage() {
   } = useForm<BootstrapAdminInput>({ resolver: zodResolver(bootstrapAdminSchema) });
 
   return (
-    <AuthLayout title={t(locale, 'auth.setup.title')} description={t(locale, 'auth.setup.description')}>
-      <form onSubmit={handleSubmit((values) => bootstrapMutation.mutate(values))} className="space-y-5" noValidate>
-        <FormError message={bootstrapMutation.isError ? (bootstrapMutation.error as Error).message : undefined} />
+    <AuthLayout
+      title={t(locale, 'auth.setup.title')}
+      description={t(locale, 'auth.setup.description')}
+    >
+      <form
+        onSubmit={handleSubmit((values) => bootstrapMutation.mutate(values))}
+        className="space-y-5"
+        noValidate
+      >
+        <FormError
+          message={
+            bootstrapMutation.isError ? (bootstrapMutation.error as Error).message : undefined
+          }
+        />
 
         <div className="space-y-2">
           <Label htmlFor="fullName">{t(locale, 'auth.field.fullName')}</Label>

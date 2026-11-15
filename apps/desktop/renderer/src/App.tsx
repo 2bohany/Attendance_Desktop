@@ -8,7 +8,8 @@ import { LoginPage, SetupPage, useSetupStatus } from '@/features/auth';
 import { useAuthStore } from '@/stores/auth-store';
 import { useAppStore } from '@/stores/app-store';
 import { UNAUTHORIZED_EVENT } from '@/services/api-client';
-import { navigate, pageFromPath, usePath } from '@/lib/router';
+import { isDesktopShell, LOGIN_PATH, navigate, pageFromPath, usePath } from '@/lib/router';
+import { LandingPage } from '@/features/landing';
 import { isNavItemVisible } from '@/lib/permissions';
 import { t, type TranslationKey } from '@/lib/i18n';
 import { BrandMark } from '@/components/brand-mark';
@@ -17,7 +18,9 @@ import { BrandMark } from '@/components/brand-mark';
 const pageMap: Record<NavItemId, React.ComponentType> = {
   dashboard: DashboardPage,
   employees: lazy(() => import('@/features/employees').then((m) => ({ default: m.EmployeesPage }))),
-  attendance: lazy(() => import('@/features/attendance').then((m) => ({ default: m.AttendancePage }))),
+  attendance: lazy(() =>
+    import('@/features/attendance').then((m) => ({ default: m.AttendancePage })),
+  ),
   users: lazy(() => import('@/features/users').then((m) => ({ default: m.UsersPage }))),
   leaves: lazy(() => import('@/features/leaves').then((m) => ({ default: m.LeavesPage }))),
   holidays: lazy(() => import('@/features/holidays').then((m) => ({ default: m.HolidaysPage }))),
@@ -75,11 +78,12 @@ function AuthenticatedApp() {
 
   useEffect(() => {
     if (allowed) return;
-    if (requested === null) toast.info(t(locale, 'error.notFound'));
+    // Arriving from the sign-in screen is not an unknown page.
+    if (requested === null && path !== LOGIN_PATH) toast.info(t(locale, 'error.notFound'));
     navigate('dashboard', { replace: true });
     // Only react to URL / permission changes, not to locale switches.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allowed, requested, user]);
+  }, [allowed, requested, user, path]);
 
   const navItem = NAV_ITEMS.find((item) => item.id === activePage);
   useDocumentTitle((navItem?.labelKey as TranslationKey | undefined) ?? null);
@@ -102,6 +106,8 @@ export function App() {
   const queryClient = useQueryClient();
   const { data: setupStatus } = useSetupStatus(status === 'anonymous');
   const previousStatus = useRef(status);
+  const path = usePath();
+  const showLanding = status === 'anonymous' && !isDesktopShell && path === '/';
 
   useEffect(() => initialize(), [initialize]);
 
@@ -128,13 +134,15 @@ export function App() {
   }, [status, queryClient]);
 
   useDocumentTitle(
-    status === 'anonymous'
-      ? setupStatus?.needsSetup
-        ? 'auth.setup.title'
-        : 'auth.login.title'
-      : status === 'restoring'
-        ? null
-        : undefined,
+    showLanding
+      ? null
+      : status === 'anonymous'
+        ? setupStatus?.needsSetup
+          ? 'auth.setup.title'
+          : 'auth.login.title'
+        : status === 'restoring'
+          ? null
+          : undefined,
   );
 
   if (status === 'restoring') {
@@ -143,6 +151,11 @@ export function App() {
 
   if (status === 'authenticated') {
     return <AuthenticatedApp />;
+  }
+
+  // Signed-out visitors land on the public home page first.
+  if (showLanding) {
+    return <LandingPage needsSetup={setupStatus?.needsSetup} />;
   }
 
   if (!setupStatus) {

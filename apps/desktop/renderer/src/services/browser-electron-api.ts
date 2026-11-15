@@ -64,10 +64,21 @@ async function parseBody(response: Response): Promise<unknown> {
   }
 }
 
+let browserBridge = false;
+
+/**
+ * Web only: whether a token is stored, so signed-out visitors skip the session
+ * check. Returns null under Electron, whose main process owns the token.
+ */
+export function hasStoredSession(): boolean | null {
+  return browserBridge ? readStoredToken() !== null : null;
+}
+
 function installBrowserElectronApi(): void {
   if (window.electronAPI) {
     return;
   }
+  browserBridge = true;
 
   let authToken = readStoredToken();
 

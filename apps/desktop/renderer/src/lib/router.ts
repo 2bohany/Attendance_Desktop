@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from 'react';
+import type React from 'react';
 import { NAV_ITEMS, type NavItemId } from '@attendance/shared';
 
 /**
@@ -7,6 +8,12 @@ import { NAV_ITEMS, type NavItemId } from '@attendance/shared';
  * app loads from file://, where only hash routes survive a reload.
  */
 const useHash = typeof window !== 'undefined' && window.location.protocol === 'file:';
+
+/** The packaged desktop app (file://) has no public landing page. */
+export const isDesktopShell = useHash;
+
+/** Public, signed-out routes. */
+export const LOGIN_PATH = '/login';
 
 const NAV_IDS = new Set<string>(NAV_ITEMS.map((item) => item.id));
 const NAVIGATE_EVENT = 'attendance:navigate';
@@ -39,7 +46,10 @@ function subscribe(onChange: () => void): () => void {
 }
 
 export function navigate(page: NavItemId, options: { replace?: boolean } = {}): void {
-  const target = pathForPage(page);
+  navigateTo(pathForPage(page), options);
+}
+
+export function navigateTo(target: string, options: { replace?: boolean } = {}): void {
   if (target === currentPath()) return;
 
   if (useHash) {
@@ -60,5 +70,18 @@ export function usePath(): string {
 
 /** Builds an href for anchors so middle-click / open-in-new-tab work. */
 export function hrefForPage(page: NavItemId): string {
-  return useHash ? `#${pathForPage(page)}` : pathForPage(page);
+  return hrefFor(pathForPage(page));
+}
+
+export function hrefFor(path: string): string {
+  return useHash ? `#${path}` : path;
+}
+
+/** onClick for <a href> that keeps modifier-clicks (new tab) working. */
+export function linkHandler(path: string) {
+  return (event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
+    event.preventDefault();
+    navigateTo(path);
+  };
 }
