@@ -8,7 +8,8 @@ import type { AppInfo, BackendRequest, BackendResponse, DatabaseInfo } from '@at
 
 const API_ORIGIN = (import.meta.env.VITE_API_URL ?? '').replace(/\/+$/, '');
 const TOKEN_KEY = 'attendance.accessToken';
-const REQUEST_TIMEOUT_MS = 30_000;
+// Above the serverless maxDuration (60s) so a slow cold start is not reported as a failure.
+const REQUEST_TIMEOUT_MS = 65_000;
 
 function readStoredToken(): string | null {
   try {
